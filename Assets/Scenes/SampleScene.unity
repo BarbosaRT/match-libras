@@ -131,8 +131,8 @@ GameObject:
   - component: {fileID: 200919073}
   - component: {fileID: 200919074}
   m_Layer: 0
-  m_Name: Slot (2)
-  m_TagString: Untagged
+  m_Name: Comidas
+  m_TagString: Comida
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -200,7 +200,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.23934752, y: -0.22553885}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -210,7 +210,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.2117306, y: 1.2945817}
   m_EdgeRadius: 0
 --- !u!1 &417484219
 GameObject:
@@ -726,6 +726,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 539249045}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &682442515
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 682442516}
+  - component: {fileID: 682442517}
+  m_Layer: 0
+  m_Name: Level Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &682442516
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 682442515}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.19379, y: 3.85374, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &682442517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 682442515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59443360dc33a2b4d908814dcbdef459, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelManager
+  <NumberSprites>k__BackingField:
+  - {fileID: 21300000, guid: abc70ad95dc4d0e45b6d5bdd90a7e509, type: 3}
+  - {fileID: 21300000, guid: 6e3a28a4e8a53a24ba460c56176e7bbb, type: 3}
+  - {fileID: 21300000, guid: 5b9a9cb898ee38e479487222b1579126, type: 3}
+  - {fileID: 21300000, guid: 2cb28be7691ac7c4b89fe14a91255236, type: 3}
+  - {fileID: 21300000, guid: 25f51d13fac56c2419e528f5e9578eee, type: 3}
+  - {fileID: 21300000, guid: cdabbaa7a91ab974aa59291c3eb0d82f, type: 3}
+  - {fileID: 21300000, guid: e4445e6e391edd248aab2ed64db6e6d5, type: 3}
+  - {fileID: 21300000, guid: a049795f7309160469fc86f15f82ace8, type: 3}
+  - {fileID: 21300000, guid: 3c969d039650f864ea0cd15eda4efed6, type: 3}
+  - {fileID: 21300000, guid: 9b63c9bc370c7574d99937204f41bd65, type: 3}
+  spriteRenderer: {fileID: 718895757}
+  number: 0
 --- !u!1 &718895755
 GameObject:
   m_ObjectHideFlags: 0
@@ -1193,7 +1250,7 @@ GameObject:
   - component: {fileID: 1272470343}
   - component: {fileID: 1272470344}
   m_Layer: 0
-  m_Name: Slot (1)
+  m_Name: Numero
   m_TagString: Numero
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1262,7 +1319,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.2311312, y: -0.22401929}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1272,7 +1329,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.2489104, y: 1.3058047}
   m_EdgeRadius: 0
 --- !u!1 &1476639518
 GameObject:
@@ -1284,7 +1341,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1476639519}
   m_Layer: 0
-  m_Name: Slot
+  m_Name: Libra
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1670,7 +1727,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 5b9a9cb898ee38e479487222b1579126, type: 3}
+  m_Sprite: {fileID: -61009958904472424, guid: 61f19e57cbac9bb4db20e727d2418201, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1693,3 +1750,4 @@ SceneRoots:
   - {fileID: 1476639519}
   - {fileID: 1272470342}
   - {fileID: 200919072}
+  - {fileID: 682442516}
