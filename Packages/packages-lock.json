@@ -1,5 +1,18 @@
 {
   "dependencies": {
+    "com.merry-yellow.code-assist": {
+      "version": "file:com.merry-yellow.code-assist",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.spoiledcat.git": {
+      "version": "1.0.62",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://registry.spoiledcat.com"
+    },
     "com.unity.2d.animation": {
       "version": "13.0.4",
       "depth": 0,
