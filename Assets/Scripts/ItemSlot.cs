@@ -159,11 +159,14 @@ public class ItemSlot : MonoBehaviour, IDropHandler
 
     private IEnumerator MoverParaPosicao(RectTransform rt, Vector2 destino, float duracao)
     {
+        if (rt == null) yield break; // <- guard contra objeto destruido
+
         Vector2 origem = rt.anchoredPosition;
         float tempo = 0f;
 
         while (tempo < duracao)
         {
+            if (rt == null) yield break; // <- checa a cada frame tambem
             tempo += Time.deltaTime;
             float t = tempo / duracao;
             t = t * t * (3f - 2f * t);
@@ -171,7 +174,8 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             yield return null;
         }
 
-        rt.anchoredPosition = destino;
+        if (rt != null)
+            rt.anchoredPosition = destino;
     }
 
     private void RejeitarPeca(DragDrop peca)
