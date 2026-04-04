@@ -126,12 +126,12 @@ TextureImporter:
       name: Hotbar_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 3600
-        height: 400
+        x: 80
+        y: 86
+        width: 1037
+        height: 1026
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []

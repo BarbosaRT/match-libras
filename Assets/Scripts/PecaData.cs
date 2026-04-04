@@ -6,4 +6,4 @@ public enum ValorNumero
     Cinco, Seis, Sete, Oito, Nove
 }
 
-public enum ValorComida { Uva, Hamburger, Bolo }
+public enum ValorComida { Uva, Hamburger}

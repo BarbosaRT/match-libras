@@ -147,12 +147,12 @@ TextureImporter:
       name: uva_0
       rect:
         serializedVersion: 2
-        x: 79
-        y: 167
-        width: 49
-        height: 33
+        x: 0
+        y: 0
+        width: 200
+        height: 200
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -165,143 +165,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: uva_1
-      rect:
-        serializedVersion: 2
-        x: 7
-        y: 101
-        width: 62
-        height: 62
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 71c2ed32d9740d790800000000000000
-      internalID: -7507421838589416425
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: uva_2
-      rect:
-        serializedVersion: 2
-        x: 70
-        y: 96
-        width: 65
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 838d55a46e6ad6440800000000000000
-      internalID: 4930780675060389944
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: uva_3
-      rect:
-        serializedVersion: 2
-        x: 137
-        y: 96
-        width: 57
-        height: 61
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 1170c3d9d5d7c35a0800000000000000
-      internalID: -6540214717825415407
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: uva_4
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 44
-        width: 60
-        height: 53
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 8aec723d49929fdd0800000000000000
-      internalID: -2451882802952024408
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: uva_5
-      rect:
-        serializedVersion: 2
-        x: 65
-        y: 0
-        width: 56
-        height: 47
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f7298adf3c7cc1750800000000000000
-      internalID: 6277111625235862143
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: uva_6
-      rect:
-        serializedVersion: 2
-        x: 102
-        y: 41
-        width: 59
-        height: 57
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5e63537dd02262300800000000000000
-      internalID: 226906274069296869
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 4001d46bca209684b83efb652d653c1b
     internalID: 0
     vertices: []
     indices: 
