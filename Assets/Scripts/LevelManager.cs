@@ -35,7 +35,16 @@ public class LevelManager : MonoBehaviour
     private ValorComida comidaCorreta;
     private List<GameObject> todasPecas = new List<GameObject>();
 
-    void Start() => SpawnarRodada();
+    void Start()
+    {
+        StartCoroutine(StartComDelay());
+    }
+
+    IEnumerator StartComDelay()
+    {
+        yield return new WaitForSeconds(1.5f);
+        SpawnarRodada();
+    }
 
     public void SpawnarRodada()
     {
@@ -78,8 +87,9 @@ public class LevelManager : MonoBehaviour
         }
 
         // aguarda animacoes de entrada e entao repele sobreposicoes
-        yield return new WaitForSeconds(animacaoDuracao + 0.15f);
-        RepelirPecas();
+        //yield return new WaitForSeconds(animacaoDuracao - 0.15f);
+        //RepelirPecas();
+        yield return null;
     }
 
     private int ContarPorTipo(TipoPeca tipo)
@@ -100,87 +110,6 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(AnimarCaotico(obj.GetComponent<RectTransform>(), origem, destino));
     }
 
-    // ── REPULSAO ─────────────────────────────────────────────────────
-
-    private void RepelirPecas()
-    {
-        todasPecas.RemoveAll(p => p == null);
-
-        // apenas pecas livres no canvas (nao dentro de slots)
-        var livres = todasPecas
-            .Where(p => p != null && p.transform.parent == canvas.transform)
-            .Select(p => p.GetComponent<RectTransform>())
-            .Where(rt => rt != null)
-            .ToList();
-
-        for (int i = 0; i < livres.Count; i++)
-        {
-            for (int j = i + 1; j < livres.Count; j++)
-            {
-                var rtA = livres[i];
-                var rtB = livres[j];
-
-                if (rtA == null || rtB == null) continue;
-
-                Vector2 delta = rtB.anchoredPosition - rtA.anchoredPosition;
-                float dist = delta.magnitude;
-
-                if (dist < raioRepulsao && dist > 0.01f)
-                {
-                    Vector2 direcao = delta.normalized;
-                    float overlap = raioRepulsao - dist;
-
-                    StartCoroutine(AplicarEmpurrao(rtA, -direcao * overlap * 0.5f));
-                    StartCoroutine(AplicarEmpurrao(rtB, direcao * overlap * 0.5f));
-                }
-            }
-        }
-    }
-
-    private IEnumerator AplicarEmpurrao(RectTransform rt, Vector2 deslocamento)
-    {
-        if (rt == null) yield break;
-
-        Vector2 origem = rt.anchoredPosition;
-        Vector2 destino = ClampNaArea(origem + deslocamento);
-
-        float tempo = 0f;
-        while (tempo < duracaoRepulsao)
-        {
-            if (rt == null) yield break;
-            tempo += Time.deltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, tempo / duracaoRepulsao);
-            rt.anchoredPosition = Vector2.Lerp(origem, destino, t);
-            yield return null;
-        }
-
-        if (rt != null)
-        {
-            rt.anchoredPosition = destino;
-            rt.GetComponent<DragDrop>()?.DefinirPosicaoOriginal();
-        }
-    }
-
-    // converte posicao do canvas para os limites da areaDeSpawn
-    private Vector2 ClampNaArea(Vector2 posCanvas)
-    {
-        Rect rect = areaDeSpawn.rect;
-        Vector3 worldPos = canvas.GetComponent<RectTransform>().TransformPoint(posCanvas);
-        Vector3 localPos = areaDeSpawn.InverseTransformPoint(worldPos);
-
-        localPos.x = Mathf.Clamp(localPos.x, rect.xMin, rect.xMax);
-        localPos.y = Mathf.Clamp(localPos.y, rect.yMin, rect.yMax);
-
-        Vector3 clampedWorld = areaDeSpawn.TransformPoint(localPos);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            canvas.GetComponent<RectTransform>(),
-            RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, clampedWorld),
-            canvas.worldCamera,
-            out Vector2 canvasLocal
-        );
-
-        return canvasLocal;
-    }
 
     // ── PECAS NECESSARIAS ─────────────────────────────────────────────
 
@@ -339,6 +268,8 @@ public class LevelManager : MonoBehaviour
         peca.valorNumero = valorNum;
         peca.valorComida = valorCom;
         peca.AplicarSprite();
+        var fisica = obj.GetComponent<PecaFisica>();
+        if (fisica != null) fisica.Inicializar(canvas, areaDeSpawn);
         return obj;
     }
 

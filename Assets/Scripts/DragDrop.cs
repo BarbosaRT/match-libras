@@ -113,6 +113,11 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         escalaCoroutine = StartCoroutine(AnimarEscalaESombra(originalScale * scaleMultiplier, 0f, 0.15f));
 
         canvasGroup.blocksRaycasts = false;
+        var fisica = GetComponent<PecaFisica>();
+        if (fisica != null)
+        {
+            fisica.enabled = false;
+        }
         rectTransform.SetAsLastSibling();
         StartCoroutine(AnimarRotacao(Quaternion.identity, 0.15f));
 
@@ -147,6 +152,13 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         if (escalaCoroutine != null) StopCoroutine(escalaCoroutine);
         escalaCoroutine = StartCoroutine(AnimarEscalaESombra(originalScale, alphaOriginalSombra, 0.15f));
         canvasGroup.blocksRaycasts = true;
+        var fisica = GetComponent<PecaFisica>();
+        if (fisica != null)
+        {
+            fisica.enabled = true;
+            // da um leve impulso na direcao que estava arrastando ao soltar
+            fisica.AplicarImpulso(eventData.delta * 3f);
+        }
     }
 
     private IEnumerator AnimarEscalaESombra(Vector3 escalaAlvo, float alphaAlvo, float duracao)

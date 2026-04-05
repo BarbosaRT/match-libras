@@ -2,7 +2,7 @@
 - Project name: match-libras
 - Unity version: Unity 6000.3.11f1
 - Active game object:
-  - Name: Peça(Clone)
-  - Tag: Numero
-  - Layer: UI
+  - Name: EventSystem
+  - Tag: Untagged
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
