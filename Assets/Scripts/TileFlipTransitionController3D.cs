@@ -26,39 +26,39 @@ public class TileFlipTransitionController3D : MonoBehaviour
 
     IEnumerator DoTransition()
     {
+        // 1. Capture current screen
         yield return new WaitForEndOfFrame();
 
-        // 1. Capture current screen
         Texture2D screenTex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
         screenTex.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
         screenTex.Apply();
 
-        // 2. Create a dedicated camera for the tiles so they always render on top
-        GameObject camGO = new GameObject("TileCam");
-        DontDestroyOnLoad(camGO);
-        Camera tileCam = camGO.AddComponent<Camera>();
-        tileCam.clearFlags = CameraClearFlags.Depth;
-        tileCam.cullingMask = LayerMask.GetMask("TransitionTiles");
-        tileCam.depth = 99;
-        tileCam.orthographic = false;
+        // 2. Store main cam reference before scene changes
+        Camera mainCam = Camera.main;
+        float camHeight = 2f * mainCam.orthographicSize;
+        float camWidth = camHeight * mainCam.aspect;
+        float tileW = camWidth / columns;
+        float tileH = camHeight / rows;
+        float tileD = (tileW + tileH) * 0.5f;
 
-        // 3. Make sure the layer exists at runtime (add "TransitionTiles" layer in Project Settings)
-        int tileLayer = LayerMask.NameToLayer("TransitionTiles");
+        // Z: place cubes just in front of camera, well within clip range
+        // For orthographic: anything between nearClip and farClip is visible
+        // We place at nearClip + small offset so they render in front of scene
+        float tileZ = mainCam.transform.position.z + mainCam.nearClipPlane + tileD + 0.1f;
 
-        // 4. Load next scene immediately — tiles will cover the swap
+        // 3. Load next scene — cubes will cover the transition
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(nextScene);
         asyncLoad.allowSceneActivation = true;
 
-        // 5. Create all tile cubes
-        Camera mainCam = Camera.main;
-        List<TileFlip> tiles = CreateTiles(mainCam, screenTex, tileLayer);
+        // 4. Create cubes BEFORE scene unloads so we have cam data
+        List<TileFlip> tiles = CreateTiles(mainCam, screenTex, tileW, tileH, tileD, tileZ);
 
-        // 6. Wait for new scene to fully load and render
+        // 5. Wait for new scene to fully load and render two frames
         yield return new WaitUntil(() => asyncLoad.isDone);
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
 
-        // 7. Capture new scene for bottom face
+        // 6. Capture new scene for bottom faces
         Texture2D newSceneTex = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, false);
         newSceneTex.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
         newSceneTex.Apply();
@@ -66,52 +66,36 @@ public class TileFlipTransitionController3D : MonoBehaviour
         foreach (var tile in tiles)
             tile.SetBottomTexture(newSceneTex);
 
-        // 8. Animate
+        // 7. Animate
         float elapsed = 0f;
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float globalProgress = Mathf.Clamp01(elapsed / duration);
-
             foreach (var tile in tiles)
-                tile.UpdateFlip(globalProgress);
-
+                tile.UpdateFlip(Mathf.Clamp01(elapsed / duration));
             yield return null;
         }
 
-        // 9. Hold last frame briefly so it doesn't pop
         yield return new WaitForSeconds(0.05f);
 
-        // 10. Cleanup
+        // 8. Cleanup
         foreach (var tile in tiles)
-        {
-            Destroy(tile.TopTexture);
-            Destroy(tile.BottomTexture);
             Destroy(tile.gameObject);
-        }
 
         Destroy(screenTex);
         Destroy(newSceneTex);
-        Destroy(camGO);
         Destroy(gameObject);
     }
 
-    List<TileFlip> CreateTiles(Camera cam, Texture2D screenTex, int tileLayer)
+    List<TileFlip> CreateTiles(Camera cam, Texture2D screenTex,
+                                float tileW, float tileH, float tileD, float tileZ)
     {
         var tiles = new List<TileFlip>();
 
         float camHeight = 2f * cam.orthographicSize;
         float camWidth = camHeight * cam.aspect;
 
-        float tileW = camWidth / columns;
-        float tileH = camHeight / rows;
-        float tileD = (tileW + tileH) * 0.5f;
-
         Vector3 camPos = cam.transform.position;
-
-        // Place cubes just past the near clip plane so they're guaranteed visible
-        float zOffset = cam.nearClipPlane + tileD * 0.5f + 0.01f;
-
         float startX = camPos.x - camWidth * 0.5f + tileW * 0.5f;
         float startY = camPos.y - camHeight * 0.5f + tileH * 0.5f;
 
@@ -134,15 +118,18 @@ public class TileFlipTransitionController3D : MonoBehaviour
                 tileTex.SetPixels(pixels);
                 tileTex.Apply();
 
-                // Z is in camera's forward direction, not world Z
-                Vector3 pos = camPos + cam.transform.forward * zOffset
-                            + cam.transform.right * (startX - camPos.x + col * tileW)
-                            + cam.transform.up * (startY - camPos.y + row * tileH);
+                Vector3 pos = new Vector3(
+                    startX + col * tileW,
+                    startY + row * tileH,
+                    tileZ
+                );
 
                 GameObject go = new GameObject($"Tile_{col}_{row}");
                 DontDestroyOnLoad(go);
+
                 TileFlip tile = go.AddComponent<TileFlip>();
-                tile.Init(pos, tileW, tileH, tileD, tileTex, delay, tileLayer);
+                tile.Init(pos, tileW, tileH, tileD, tileTex, delay,
+                          col, row, columns, rows, screenTex.width, screenTex.height);
                 tiles.Add(tile);
             }
         }
