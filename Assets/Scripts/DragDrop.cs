@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -32,7 +33,7 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
     public Vector2 PosicaoOriginal { get; private set; }
     [Header("Sombra")]
     public string nomeSombra = "Sombra"; // nome do filho Image de sombra
-    private Image imagemSombra;
+    public Image imagemSombra;
     private float alphaOriginalSombra;
 
     private Coroutine escalaCoroutine;
@@ -110,7 +111,7 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
             transform.SetParent(rootCanvas.transform, true);
 
         if (escalaCoroutine != null) StopCoroutine(escalaCoroutine);
-        escalaCoroutine = StartCoroutine(AnimarEscalaESombra(originalScale * scaleMultiplier, 0f, 0.15f));
+        escalaCoroutine = StartCoroutine(AnimarEscalaESombra(originalScale * scaleMultiplier, 1f, 0.15f));
 
         canvasGroup.blocksRaycasts = false;
         var fisica = GetComponent<PecaFisica>();

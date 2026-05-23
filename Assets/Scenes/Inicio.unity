@@ -1675,8 +1675,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2009864423}
-        m_TargetAssemblyTypeName: TileFlipTransitionController3D, Assembly-CSharp
+      - m_Target: {fileID: 2009864422}
+        m_TargetAssemblyTypeName: TileFlipTransitionController, Assembly-CSharp
         m_MethodName: PlayTransition
         m_Mode: 1
         m_Arguments:
@@ -3359,7 +3359,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2009864420}
   - component: {fileID: 2009864421}
-  - component: {fileID: 2009864423}
+  - component: {fileID: 2009864422}
   m_Layer: 0
   m_Name: SceneLoader
   m_TagString: Untagged
@@ -3394,7 +3394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59ed4819da870ec45a2c87e4fbc319c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoader
---- !u!114 &2009864423
+--- !u!114 &2009864422
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3403,15 +3403,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 2009864419}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f80fc27b3186f6e4bbc141673197e5da, type: 3}
+  m_Script: {fileID: 11500000, guid: 08f80d4f74bb35b43b7f24383a54ed6e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TileFlipTransitionController3D
+  m_EditorClassIdentifier: Assembly-CSharp::TileFlipTransitionController
   nextScene: Scenes/Jogo
   duration: 2
   columns: 16
   rows: 12
   stagger: 0.4
-  checkerPattern: 1
+  transitionMaterial: {fileID: 2100000, guid: 26a4e7507277413449e9189cb7fb5745, type: 2}
 --- !u!1 &2088167969
 GameObject:
   m_ObjectHideFlags: 0

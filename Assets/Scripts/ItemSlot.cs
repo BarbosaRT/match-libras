@@ -40,15 +40,7 @@ public class ItemSlot : MonoBehaviour, IDropHandler
         switch (tipoPeca)
         {
             case TipoPeca.Numero:
-                if (levelManager.number == peca.Valor)
-                {
-                    EncaixarPeca(peca);
-                    Debug.Log("Numero correto!");
-                }
-                else
-                {
-                    RejeitarPeca(peca);
-                }
+                EncaixarPeca(peca);
                 break;
 
             case TipoPeca.Comida:
@@ -67,12 +59,12 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             return;
         }
 
-        if (pecasNoSlot.Count >= levelManager.number)
-        {
-            Debug.Log("Slot cheio!");
-            RejeitarPeca(peca);
-            return;
-        }
+        //if (pecasNoSlot.Count >= levelManager.number)
+        //{
+        //    Debug.Log("Slot cheio!");
+        //    RejeitarPeca(peca);
+        //    return;
+        //}
 
         EncaixarPeca(peca);
         Debug.Log($"Comida adicionada: {pecasNoSlot.Count}/{levelManager.number}");
@@ -83,7 +75,6 @@ public class ItemSlot : MonoBehaviour, IDropHandler
         if (pecasNoSlot.Count == levelManager.number)
         {
             Debug.Log("Combinacao correta!");
-            levelManager.VerificarVitoria(this);
         }
     }
 
@@ -99,25 +90,13 @@ public class ItemSlot : MonoBehaviour, IDropHandler
         if (tipoPeca == TipoPeca.Numero)
         {
             pecaRT.anchoredPosition = Vector2.zero;
-            levelManager.VerificarVitoria(this);
         }
         else
         {
             OrganizarGrid();
         }
     }
-    public void ResetarEstado()
-    {
-        // solta as pecas de volta pro canvas sem destruir
-        foreach (var p in pecasNoSlot)
-        {
-            if (p == null) continue;
-            p.transform.SetParent(levelManager.canvas.transform, true);
-            p.GetComponent<CanvasGroup>().blocksRaycasts = true;
-        }
-        pecasNoSlot.Clear();
-    }
-
+    
     public bool EstaCompleto()
     {
         if (tipoPeca == TipoPeca.Numero)
@@ -186,7 +165,7 @@ public class ItemSlot : MonoBehaviour, IDropHandler
         peca.VoltarParaOrigem(rejeicaoDuracao, this);
     }
 
-    private void ExpulsarTodasPecas()
+    public void ExpulsarTodasPecas()
     {
         foreach (var p in pecasNoSlot)
         {

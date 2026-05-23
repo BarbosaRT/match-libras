@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using TMPro;
+using Unity.VisualScripting;
 
 public class LevelManager : MonoBehaviour
 {
@@ -11,6 +13,7 @@ public class LevelManager : MonoBehaviour
     public int number;
     public Canvas canvas;
     public GameObject pecaPrefab;
+    public TextMeshProUGUI vidasText;
 
     [Header("Spawn - Geral")]
     public float animacaoDuracao = 0.4f;
@@ -34,9 +37,11 @@ public class LevelManager : MonoBehaviour
 
     private ValorComida comidaCorreta;
     private List<GameObject> todasPecas = new List<GameObject>();
+    private int vidas = 3;
 
     void Start()
     {
+        vidasText.text = new string('❤', vidas);
         StartCoroutine(StartComDelay());
     }
 
@@ -177,11 +182,11 @@ public class LevelManager : MonoBehaviour
 
     // ── VITORIA ───────────────────────────────────────────────────────
 
-    public void VerificarVitoria(ItemSlot slotCompletado)
+    public void VerificarVitoria()
     {
         var todosSlots = FindObjectsByType<ItemSlot>(FindObjectsSortMode.None);
         foreach (var slot in todosSlots)
-            if (!slot.EstaCompleto()) return;
+            if (!slot.EstaCompleto()) { ExpulsarSlots(); return; }
 
         StartCoroutine(AvancarRodada());
     }
@@ -192,8 +197,15 @@ public class LevelManager : MonoBehaviour
         SpawnarRodada();
         yield return null;
     }
-
-    private void ResetarSlots()
+    public void ExpulsarSlots()
+    {
+        vidas--;
+        vidasText.text = new string('❤', vidas);
+        var todosSlots = FindObjectsByType<ItemSlot>(FindObjectsSortMode.None);
+        foreach (var slot in todosSlots)
+            slot.ExpulsarTodasPecas();
+    }
+    public void ResetarSlots()
     {
         var todosSlots = FindObjectsByType<ItemSlot>(FindObjectsSortMode.None);
         foreach (var slot in todosSlots)
