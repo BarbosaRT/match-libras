@@ -13,7 +13,7 @@ public class LevelManager : MonoBehaviour
     public int number;
     public Canvas canvas;
     public GameObject pecaPrefab;
-    public TextMeshProUGUI vidasText;
+    [field: SerializeField] public List<GameObject> vidaImages { get; private set; }
 
     [Header("Spawn - Geral")]
     public float animacaoDuracao = 0.4f;
@@ -38,11 +38,22 @@ public class LevelManager : MonoBehaviour
     private ValorComida comidaCorreta;
     private List<GameObject> todasPecas = new List<GameObject>();
     private int vidas = 3;
+    private List<int> numeros = new List<int>();
 
     void Start()
     {
-        vidasText.text = new string('❤', vidas);
+        AtualizarVidas();
         StartCoroutine(StartComDelay());
+    }
+
+    void AtualizarVidas()
+    {
+        int v = vidas;
+        foreach (GameObject obj in vidaImages)
+        {
+            obj.SetActive(v > 0);
+            v--;
+        }
     }
 
     IEnumerator StartComDelay()
@@ -200,7 +211,7 @@ public class LevelManager : MonoBehaviour
     public void ExpulsarSlots()
     {
         vidas--;
-        vidasText.text = new string('❤', vidas);
+        AtualizarVidas();
         var todosSlots = FindObjectsByType<ItemSlot>(FindObjectsSortMode.None);
         foreach (var slot in todosSlots)
             slot.ExpulsarTodasPecas();

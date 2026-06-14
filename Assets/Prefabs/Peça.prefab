@@ -208,19 +208,19 @@ MonoBehaviour:
   valorNumero: 0
   valorComida: 0
   <NumeroSprites>k__BackingField:
-  - {fileID: -61009958904472424, guid: 61f19e57cbac9bb4db20e727d2418201, type: 3}
-  - {fileID: 8378225185371500638, guid: 3b5ade3e6262382458623e7a40bd9ce2, type: 3}
-  - {fileID: -4906167379763698644, guid: 9d40e1ba7121fdd4fb9f198efb25760f, type: 3}
-  - {fileID: 1727333087660148702, guid: 1707dd7428511ba439a6699c20f5b065, type: 3}
-  - {fileID: 2093941788613158730, guid: e819df7fc22f8a3429bb72963e7e94de, type: 3}
-  - {fileID: -4997370770350388271, guid: fb58d6836458ab147bd04a178dce09b6, type: 3}
-  - {fileID: 973736656227938702, guid: c99efb10d8597754aaecfeaa76bc47b7, type: 3}
-  - {fileID: 3413573384912069025, guid: 6952b85a57003ca459d781ec50979c58, type: 3}
-  - {fileID: -622776198014049527, guid: c525e80105a1d1f45b85799aa85a62ba, type: 3}
-  - {fileID: 8095576880969882128, guid: d61a99e642b6a9e44a47ac96008695aa, type: 3}
+  - {fileID: 5088316998373936774, guid: ecb2e926721fd0945bb6b83d0433f34d, type: 3}
+  - {fileID: -855298285791758126, guid: e355665b94da4884f8a65fabdad981f5, type: 3}
+  - {fileID: 6937817954938267909, guid: 6bdf49e166fe1ed40a6a4827d468fad1, type: 3}
+  - {fileID: -6470460504253458178, guid: b2d5043c2ad10b74fa43c03745edce06, type: 3}
+  - {fileID: -4178046375966092550, guid: 3f29b84036b4a0842bade49f86aaa869, type: 3}
+  - {fileID: 4130640169021434097, guid: 4dbaa8f3be3874b4a935f2bff3085270, type: 3}
+  - {fileID: 3465286685962602723, guid: c90bc90d0e7b63649b31ef5fccb0cb7e, type: 3}
+  - {fileID: 7028616704906629411, guid: 6918891384cfc934ea5c3a21a2c5e1eb, type: 3}
+  - {fileID: 8288426215254106694, guid: dfb643ada579871479b0ea78474ce66b, type: 3}
+  - {fileID: 4113829005332862926, guid: 4f14b76e64af033458d2711d246c015c, type: 3}
   <ComidasSprites>k__BackingField:
-  - {fileID: 3539229634404517914, guid: e60a8093caa8ab248a417f45d2dd25b4, type: 3}
-  - {fileID: -7483554341461126079, guid: 36f8946983b4ab24dadff1eb70f74993, type: 3}
+  - {fileID: 3539229634404517914, guid: 3e55bb738c9344e4d92666af3a2ce248, type: 3}
+  - {fileID: -2264623352245862100, guid: 0d6857be95931574880d68c6adb54b99, type: 3}
   nomeSombra: Sombra
   imagemSombra: {fileID: 0}
 --- !u!114 &5237396026600400844

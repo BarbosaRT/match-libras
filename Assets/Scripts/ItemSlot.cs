@@ -37,6 +37,7 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             return;
         }
 
+        Debug.Log("BUG: VOCÊ PODE SOBREPOR PEÇAS");
         switch (tipoPeca)
         {
             case TipoPeca.Numero:
