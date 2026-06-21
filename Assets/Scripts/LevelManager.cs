@@ -35,6 +35,10 @@ public class LevelManager : MonoBehaviour
     public float forcaRepulsao = 300f;
     public float duracaoRepulsao = 0.3f;
 
+    [Header("Paineis")]
+    public GameObject painelVitoria;
+    public GameObject painelDerrota;
+
     private ValorComida comidaCorreta;
     private List<GameObject> todasPecas = new List<GameObject>();
     private int vidas = 3;
@@ -42,6 +46,9 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
+        numeros = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        Embaralhar(numeros);
+
         AtualizarVidas();
         StartCoroutine(StartComDelay());
     }
@@ -53,6 +60,10 @@ public class LevelManager : MonoBehaviour
         {
             obj.SetActive(v > 0);
             v--;
+        }
+        if (vidas <= 0)
+        {
+            DerrotaFinal();
         }
     }
 
@@ -66,7 +77,13 @@ public class LevelManager : MonoBehaviour
     {
         ResetarSlots();
 
-        number = Random.Range(1, 10);
+        if (numeros.Count == 0)
+        {
+            VitoriaFinal();
+            return;
+        }
+
+        number = numeros[0];
         spriteRenderer.sprite = LibraSprites[number];
         comidaCorreta = (ValorComida)Random.Range(0, System.Enum.GetValues(typeof(ValorComida)).Length);
 
@@ -170,7 +187,7 @@ public class LevelManager : MonoBehaviour
         var lista = new List<(TipoPeca, ValorNumero, ValorComida, string)>();
 
         var disponiveis = new List<int>();
-        for (int i = 0; i <= 9; i++)
+        for (int i = 1; i <= 9; i++)
             if (i != number) disponiveis.Add(i);
         Embaralhar(disponiveis);
         lista.Add((TipoPeca.Numero, (ValorNumero)disponiveis[0], comidaCorreta, "Numero"));
@@ -198,16 +215,32 @@ public class LevelManager : MonoBehaviour
         var todosSlots = FindObjectsByType<ItemSlot>(FindObjectsSortMode.None);
         foreach (var slot in todosSlots)
             if (!slot.EstaCompleto()) { ExpulsarSlots(); return; }
-
-        StartCoroutine(AvancarRodada());
+        if (vidas > 0)
+        {
+            StartCoroutine(AvancarRodada());
+        }
     }
 
     private IEnumerator AvancarRodada()
     {
+        numeros.Remove(number);
         ResetarSlots();
         SpawnarRodada();
         yield return null;
     }
+
+    private void VitoriaFinal()
+    {
+        if (painelVitoria != null)
+            painelVitoria.SetActive(true);
+    }
+
+    private void DerrotaFinal()
+    {
+        if (painelDerrota != null)
+            painelDerrota.SetActive(true);
+    }
+
     public void ExpulsarSlots()
     {
         vidas--;

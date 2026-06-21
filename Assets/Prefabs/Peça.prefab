@@ -52,7 +52,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3928257183797637468}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -221,6 +221,14 @@ MonoBehaviour:
   <ComidasSprites>k__BackingField:
   - {fileID: 3539229634404517914, guid: 3e55bb738c9344e4d92666af3a2ce248, type: 3}
   - {fileID: -2264623352245862100, guid: 0d6857be95931574880d68c6adb54b99, type: 3}
+  - {fileID: -39566077931562464, guid: 7b8ed0a1c7073264793ae9f8f04591c7, type: 3}
+  - {fileID: -3782880393862905495, guid: 2948407b9e602ed47868f5a7ba1861f5, type: 3}
+  - {fileID: -3787099256786362025, guid: 68411c62f9880334b9ef9b6de9ceebdd, type: 3}
+  - {fileID: -7581513707642343491, guid: 22eb09791a4e602448375f28632c9402, type: 3}
+  - {fileID: -4343972821450535638, guid: a26c3c41219d1d54ab9a6f2cee7beda8, type: 3}
+  - {fileID: 916129685765505719, guid: 99e18d5ff2c38274b8baab21fcc84ea8, type: 3}
+  - {fileID: -6444940296795206775, guid: 7ad6a6793aefa64489c9724f0608abae, type: 3}
+  - {fileID: 7988356566105392646, guid: 942dd2f94ddb37540a77479a00d37a20, type: 3}
   nomeSombra: Sombra
   imagemSombra: {fileID: 0}
 --- !u!114 &5237396026600400844
@@ -238,7 +246,7 @@ MonoBehaviour:
   atrito: 16
   velocidadeMaxima: 600
   restituicao: 0.5
-  raioColisao: 160
+  raioColisao: 100
   forcaRepulsao: 300
 --- !u!225 &4938761137773136057
 CanvasGroup:
