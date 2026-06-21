@@ -14,6 +14,13 @@ public class TileFlipTransitionController : MonoBehaviour
     public float stagger = 0.4f;
     public Material transitionMaterial;
 
+    [Header("Música (opcional)")]
+    public bool sincronizarMusica = false;
+    [Tooltip("Deixe vazio para apenas fazer fade-out (sem tocar nova música ao chegar na cena)")]
+    public AudioClip musicaDaProximaCena;
+    public float fadeOutMusica = 1f;
+    public float fadeInMusica = 1f;
+
     void Awake()
     {
         // O controller sobrevive junto com o canvas
@@ -46,6 +53,10 @@ public class TileFlipTransitionController : MonoBehaviour
         mat.SetFloat("_Rows", rows);
         mat.SetFloat("_Stagger", stagger);
         mat.SetFloat("_Progress", 0f);
+
+        // 2.5. Sincroniza a música com o início da transição (tela já está "congelada")
+        if (sincronizarMusica && MusicManager.Instance != null)
+            MusicManager.Instance.SwitchMusic(musicaDaProximaCena, fadeOutMusica, fadeInMusica);
 
         // 3. Ativa a nova cena — o overlay esconde a troca
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(nextScene);

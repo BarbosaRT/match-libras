@@ -3,15 +3,10 @@ using UnityEngine;
 
 public class IntroAnimator : MonoBehaviour
 {
-    [Header("Peças MATCH")]
-    public RectTransform pieceM;
-    public RectTransform[] piecesATCH;
 
     [Header("Peças LIBRAS")]
     public RectTransform[] piecesLIBRAS;
 
-    [Header("Botão")]
-    public RectTransform btnJogar;
 
     [Header("Configurações")]
     public float slideDistance = 700f;
@@ -24,33 +19,19 @@ public class IntroAnimator : MonoBehaviour
     public float librasDuration = 0.4f;
     public float librasStagger = 0.09f;
 
-    public float btnDelay = 2.0f;
-    public float btnDuration = 0.5f;
-    public float btnRise = 80f;
 
     void Start() => StartCoroutine(PlayIntro());
 
     IEnumerator PlayIntro()
     {
-        Hide(pieceM);
-        foreach (var p in piecesATCH) Hide(p);
+        
         foreach (var p in piecesLIBRAS) Hide(p);
-        Hide(btnJogar);
-
-        yield return new WaitForSeconds(meetDelay);
-
-        StartCoroutine(SlideX(pieceM, -slideDistance, 0f, meetDuration, 0f));
-        for (int i = 0; i < piecesATCH.Length; i++)
-            StartCoroutine(SlideX(piecesATCH[i], slideDistance, 0f, meetDuration, i * atchStagger));
-
         yield return new WaitForSeconds(librasDelay - meetDelay);
 
         for (int i = 0; i < piecesLIBRAS.Length; i++)
             StartCoroutine(RiseUp(piecesLIBRAS[i], -librasRise, 0f, librasDuration, i * librasStagger));
 
-        yield return new WaitForSeconds(btnDelay - librasDelay);
-
-        StartCoroutine(RiseUp(btnJogar, -btnRise, 0f, btnDuration, 0f));
+      
     }
 
     IEnumerator SlideX(RectTransform rt, float fromX, float toX, float dur, float delay)

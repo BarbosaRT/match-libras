@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
-    private Image imageTipo;
+    public Image imageTipo;
     private Vector3 originalScale;
     public float scaleMultiplier = 1.2f;
 
@@ -35,6 +35,7 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
     public string nomeSombra = "Sombra"; // nome do filho Image de sombra
     public Image imagemSombra;
     private float alphaOriginalSombra;
+    public ParticleSystem particulasAcerto;
 
     private Coroutine escalaCoroutine;
 
@@ -73,7 +74,6 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
     {
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
-        imageTipo = transform.Find("Tipo").GetComponent<Image>();
         canvas = GetComponentInParent<Canvas>();
         originalScale = rectTransform.localScale;
         var sombraTransform = transform.Find(nomeSombra);
@@ -153,6 +153,9 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         if (escalaCoroutine != null) StopCoroutine(escalaCoroutine);
         escalaCoroutine = StartCoroutine(AnimarEscalaESombra(originalScale, alphaOriginalSombra, 0.15f));
         canvasGroup.blocksRaycasts = true;
+
+        if (particulasAcerto != null)
+            particulasAcerto.Play();
         var fisica = GetComponent<PecaFisica>();
         if (fisica != null)
         {

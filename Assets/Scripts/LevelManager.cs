@@ -15,6 +15,9 @@ public class LevelManager : MonoBehaviour
     public GameObject pecaPrefab;
     [field: SerializeField] public List<GameObject> vidaImages { get; private set; }
 
+    [Header("Container para as Peças")]
+    public RectTransform containerPecas;  // Arraste aqui o objeto (ex: Panel) onde as peças serão filhas
+
     [Header("Spawn - Geral")]
     public float animacaoDuracao = 0.4f;
 
@@ -39,10 +42,18 @@ public class LevelManager : MonoBehaviour
     public GameObject painelVitoria;
     public GameObject painelDerrota;
 
+    [Header("Feedback - Vida e Vitória")]
+    public ParticleSystem particulasAcerto;
+    public float shakeDuracao = 0.3f;
+    public float shakeMagnitude = 20f;
+
     private ValorComida comidaCorreta;
     private List<GameObject> todasPecas = new List<GameObject>();
     private int vidas = 3;
     private List<int> numeros = new List<int>();
+
+    // Propriedade auxiliar para obter o transform pai das peças
+    private Transform ParentTransform => containerPecas != null ? containerPecas : canvas.transform;
 
     void Start()
     {
@@ -119,9 +130,6 @@ public class LevelManager : MonoBehaviour
             AnimarSpawn(obj, tipo);
         }
 
-        // aguarda animacoes de entrada e entao repele sobreposicoes
-        //yield return new WaitForSeconds(animacaoDuracao - 0.15f);
-        //RepelirPecas();
         yield return null;
     }
 
@@ -137,12 +145,21 @@ public class LevelManager : MonoBehaviour
 
     private void AnimarSpawn(GameObject obj, TipoPeca tipo)
     {
-        Vector2 destino = GerarPosicaoLivre();
-        float origemY = tipo == TipoPeca.Numero ? Screen.height : -Screen.height;
-        Vector2 origem = new Vector2(destino.x + Random.Range(-150f, 150f), origemY);
+        RectTransform parentRect = containerPecas != null ? containerPecas : canvas.GetComponent<RectTransform>();
+        Vector2 destino = GerarPosicaoLivre(); // já em coordenadas locais do container
+
+        float altura = parentRect.rect.height;
+        float offsetY = altura + 200f;
+        float xOffset = Random.Range(-150f, 150f);
+
+        Vector2 origem;
+        if (tipo == TipoPeca.Numero)
+            origem = destino + new Vector2(xOffset, offsetY);   // vem de cima
+        else
+            origem = destino + new Vector2(xOffset, -offsetY);  // vem de baixo
+
         StartCoroutine(AnimarCaotico(obj.GetComponent<RectTransform>(), origem, destino));
     }
-
 
     // ── PECAS NECESSARIAS ─────────────────────────────────────────────
 
@@ -157,7 +174,7 @@ public class LevelManager : MonoBehaviour
             return d != null
                 && d.tipoPeca == TipoPeca.Numero
                 && d.valorNumero == (ValorNumero)number
-                && p.transform.parent == canvas.transform;
+                && p.transform.parent == ParentTransform;
         });
 
         if (!numeroJaExiste)
@@ -170,7 +187,7 @@ public class LevelManager : MonoBehaviour
             return d != null
                 && d.tipoPeca == TipoPeca.Comida
                 && d.valorComida == comidaCorreta
-                && p.transform.parent == canvas.transform;
+                && p.transform.parent == ParentTransform;
         });
 
         int comidasParaSpawnar = Mathf.Max(0, number - comidasExistentes);
@@ -186,13 +203,14 @@ public class LevelManager : MonoBehaviour
     {
         var lista = new List<(TipoPeca, ValorNumero, ValorComida, string)>();
 
+        // Numeros Distratores
         var disponiveis = new List<int>();
         for (int i = 1; i <= 9; i++)
             if (i != number) disponiveis.Add(i);
         Embaralhar(disponiveis);
         lista.Add((TipoPeca.Numero, (ValorNumero)disponiveis[0], comidaCorreta, "Numero"));
 
-        int totalDistratores = Random.Range(1, 5);
+        int totalDistratores = Random.Range(1, 10);
         var outrosTipos = new List<ValorComida>();
         foreach (ValorComida v in System.Enum.GetValues(typeof(ValorComida)))
             if (v != comidaCorreta) outrosTipos.Add(v);
@@ -215,6 +233,10 @@ public class LevelManager : MonoBehaviour
         var todosSlots = FindObjectsByType<ItemSlot>(FindObjectsSortMode.None);
         foreach (var slot in todosSlots)
             if (!slot.EstaCompleto()) { ExpulsarSlots(); return; }
+
+        if (particulasAcerto != null)
+            particulasAcerto.Play();
+
         if (vidas > 0)
         {
             StartCoroutine(AvancarRodada());
@@ -245,10 +267,12 @@ public class LevelManager : MonoBehaviour
     {
         vidas--;
         AtualizarVidas();
+        ScreenShake.Instance?.Shake(shakeDuracao, shakeMagnitude);
         var todosSlots = FindObjectsByType<ItemSlot>(FindObjectsSortMode.None);
         foreach (var slot in todosSlots)
             slot.ExpulsarTodasPecas();
     }
+
     public void ResetarSlots()
     {
         var todosSlots = FindObjectsByType<ItemSlot>(FindObjectsSortMode.None);
@@ -317,7 +341,7 @@ public class LevelManager : MonoBehaviour
 
     private GameObject SpawnarPeca(TipoPeca tipo, ValorNumero valorNum, ValorComida valorCom, string tag)
     {
-        var obj = Instantiate(pecaPrefab, canvas.transform);
+        var obj = Instantiate(pecaPrefab, ParentTransform);
         obj.tag = tag;
         var peca = obj.GetComponent<DragDrop>();
         peca.tipoPeca = tipo;
@@ -334,16 +358,17 @@ public class LevelManager : MonoBehaviour
         Rect rect = areaDeSpawn.rect;
         float localX = Random.Range(rect.xMin, rect.xMax);
         float localY = Random.Range(rect.yMin, rect.yMax);
-
         Vector3 worldPos = areaDeSpawn.TransformPoint(new Vector3(localX, localY, 0));
+
+        RectTransform parentRect = containerPecas != null ? containerPecas : canvas.GetComponent<RectTransform>();
+        Vector2 localPos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            canvas.GetComponent<RectTransform>(),
+            parentRect,
             RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, worldPos),
             canvas.worldCamera,
-            out Vector2 canvasLocal
+            out localPos
         );
-
-        return canvasLocal;
+        return localPos;
     }
 
     private void Embaralhar<T>(List<T> lista)

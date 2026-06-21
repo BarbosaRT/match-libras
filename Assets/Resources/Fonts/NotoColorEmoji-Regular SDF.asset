@@ -88,7 +88,39 @@ MonoBehaviour:
     - m_ComponentGlyphIDs: b50a00005b0a0000
       m_LigatureGlyphID: 7
     m_GlyphPairAdjustmentRecords: []
-    m_MarkToBaseAdjustmentRecords: []
+    m_MarkToBaseAdjustmentRecords:
+    - m_BaseGlyphID: 1
+      m_BaseGlyphAnchorPoint:
+        m_XCoordinate: 0
+        m_YCoordinate: 8.876953
+      m_MarkGlyphID: 1327
+      m_MarkPositionAdjustment:
+        m_XPositionAdjustment: -21.972656
+        m_YPositionAdjustment: 50.273438
+    - m_BaseGlyphID: 1
+      m_BaseGlyphAnchorPoint:
+        m_XCoordinate: 0
+        m_YCoordinate: 8.876953
+      m_MarkGlyphID: 1328
+      m_MarkPositionAdjustment:
+        m_XPositionAdjustment: -21.972656
+        m_YPositionAdjustment: 50.273438
+    - m_BaseGlyphID: 1
+      m_BaseGlyphAnchorPoint:
+        m_XCoordinate: 0
+        m_YCoordinate: -7.2070312
+      m_MarkGlyphID: 1329
+      m_MarkPositionAdjustment:
+        m_XPositionAdjustment: -21.972656
+        m_YPositionAdjustment: -4.5703125
+    - m_BaseGlyphID: 1
+      m_BaseGlyphAnchorPoint:
+        m_XCoordinate: 0
+        m_YCoordinate: 8.876953
+      m_MarkGlyphID: 1336
+      m_MarkPositionAdjustment:
+        m_XPositionAdjustment: -21.972656
+        m_YPositionAdjustment: 52.734375
     m_MarkToMarkAdjustmentRecords: []
   m_ShouldReimportFontFeatures: 0
   m_FallbackFontAssetTable:
@@ -266,7 +298,7 @@ Material:
     - _OutlineSoftness: 0
     - _OutlineUVSpeedX: 0
     - _OutlineUVSpeedY: 0
-    - _OutlineWidth: 0.278
+    - _OutlineWidth: 0
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
     - _ScaleRatioA: 0.9

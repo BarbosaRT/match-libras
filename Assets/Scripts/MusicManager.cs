@@ -1,104 +1,197 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Audio;
 
+/// <summary>
+/// Persistent background music manager with fade in/out support, driven through an
+/// AudioMixer exposed parameter (in dB) instead of AudioSource.volume.
+///
+/// SETUP NO EDITOR:
+/// 1. Crie um AudioMixer asset, adicione um grupo filho "Music" dentro de "Master".
+/// 2. No grupo "Music", clique direito no slider de Volume -> "Expose to script".
+/// 3. Na aba "Exposed Parameters" do Mixer, renomeie o parâmetro para "MusicVolume"
+///    (ou o nome que você colocar em `parametroVolume` abaixo).
+/// 4. No AudioSource deste GameObject, defina Output = grupo "Music".
+/// </summary>
+[RequireComponent(typeof(AudioSource))]
 public class MusicManager : MonoBehaviour
 {
-    public static MusicManager Instance;
+    public static MusicManager Instance { get; private set; }
 
-    [SerializeField] private AudioSource audioSource;
+    [Header("Audio Mixer")]
+    public AudioMixer audioMixer;
+    public string parametroVolume = "Volume";
 
-    private Coroutine fadeRoutine;
-    private float defaultVolume;
+    [Header("Configuração Padrão")]
+    public AudioClip musicaInicial;
+    public bool tocarAoIniciar = true;
+    [Range(0f, 1f)] public float volumeMaximo = 1f; // linear 0-1, convertido para dB internamente
+    public float duracaoFadeDefault = 1.5f;
 
-    private void Awake()
+    private AudioSource audioSource;
+    private Coroutine fadeCoroutine;
+
+    private const float VOLUME_MINIMO_DB = -80f; // silêncio efetivo
+
+    void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-
-            if (audioSource == null)
-                audioSource = GetComponent<AudioSource>();
-
-            defaultVolume = audioSource.volume;
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        audioSource = GetComponent<AudioSource>();
+        audioSource.loop = true;
+        audioSource.playOnAwake = false;
+
+        // Garante silêncio no mixer ao iniciar, para o fade-in funcionar corretamente
+        audioMixer.SetFloat(parametroVolume, VOLUME_MINIMO_DB);
     }
 
-    public void PlayMusic(AudioClip clip, float fadeTime = 1f)
+    void Start()
     {
-        if (clip == null)
-            return;
-
-        // Same music? Keep playing.
-        if (audioSource.clip == clip && audioSource.isPlaying)
-            return;
-
-        if (fadeRoutine != null)
-            StopCoroutine(fadeRoutine);
-
-        fadeRoutine = StartCoroutine(ChangeMusicRoutine(clip, fadeTime));
+        if (tocarAoIniciar && musicaInicial != null)
+            PlayMusic(musicaInicial, duracaoFadeDefault);
     }
 
-    IEnumerator ChangeMusicRoutine(AudioClip clip, float fadeTime)
+    // ── API PÚBLICA ──────────────────────────────────────────────────
+
+    /// <summary>
+    /// Toca uma música com fade-in. Se já estiver tocando a mesma música, não faz nada.
+    /// </summary>
+    public void PlayMusic(AudioClip clip, float fadeInDuration = -1f)
     {
-        if (audioSource.isPlaying)
-            yield return FadeOut(fadeTime);
+        if (clip == null) return;
+        if (audioSource.clip == clip && audioSource.isPlaying) return;
+
+        if (fadeInDuration < 0f) fadeInDuration = duracaoFadeDefault;
 
         audioSource.clip = clip;
         audioSource.Play();
-
-        yield return FadeIn(fadeTime);
+        IniciarFade(volumeMaximo, fadeInDuration);
     }
 
-    public Coroutine FadeOutMusic(float duration)
+    /// <summary>
+    /// Faz fade-out da música atual e a para no final.
+    /// </summary>
+    public void StopMusic(float fadeOutDuration = -1f)
     {
-        if (fadeRoutine != null)
-            StopCoroutine(fadeRoutine);
-
-        fadeRoutine = StartCoroutine(FadeOut(duration));
-        return fadeRoutine;
+        if (fadeOutDuration < 0f) fadeOutDuration = duracaoFadeDefault;
+        IniciarFade(0f, fadeOutDuration, pararAoFinalizar: true);
     }
 
-    public Coroutine FadeInMusic(float duration)
+    /// Faz fade-out da música atual e, ao terminar, faz fade-in da nova música.
+    /// Use isso para trocar de faixa entre cenas (ex: menu -> fase).
+    public void SwitchMusic(AudioClip novaMusica, float fadeOutDuration = -1f, float fadeInDuration = -1f)
     {
-        if (fadeRoutine != null)
-            StopCoroutine(fadeRoutine);
+        if (fadeOutDuration < 0f) fadeOutDuration = duracaoFadeDefault;
+        if (fadeInDuration < 0f) fadeInDuration = duracaoFadeDefault;
 
-        fadeRoutine = StartCoroutine(FadeIn(duration));
-        return fadeRoutine;
+        if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
+        fadeCoroutine = StartCoroutine(TrocarMusicaCoroutine(novaMusica, fadeOutDuration, fadeInDuration));
     }
 
-    public IEnumerator FadeOut(float duration)
+    /// Ajusta o volume gradualmente (0-1 linear) sem trocar de música ou pará-la.
+    /// Útil para um slider de volume nas configurações.
+    public void SetVolume(float volumeAlvo, float duracao = -1f)
     {
-        float startVolume = audioSource.volume;
+        if (duracao < 0f) duracao = duracaoFadeDefault;
+        IniciarFade(Mathf.Clamp01(volumeAlvo), duracao);
+    }
+    public void SetVolumeSlider(float volumeAlvo)
+    {
+        IniciarFade(Mathf.Clamp01(volumeAlvo), 0);
+    }
 
-        while (audioSource.volume > 0)
+    // ── INTERNO ──────────────────────────────────────────────────────
+
+    private void IniciarFade(float volumeLinearAlvo, float duracao, bool pararAoFinalizar = false)
+    {
+        if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
+        fadeCoroutine = StartCoroutine(FadeCoroutine(volumeLinearAlvo, duracao, pararAoFinalizar));
+    }
+
+    private IEnumerator FadeCoroutine(float volumeLinearAlvo, float duracao, bool pararAoFinalizar)
+    {
+        audioMixer.GetFloat(parametroVolume, out float dbAtual);
+        float volumeLinearAtual = DbParaLinear(dbAtual);
+        float tempo = 0f;
+
+        if (duracao <= 0f)
         {
-            audioSource.volume -= startVolume * Time.deltaTime / duration;
-            yield return null;
+            AplicarVolume(volumeLinearAlvo);
+        }
+        else
+        {
+            while (tempo < duracao)
+            {
+                tempo += Time.unscaledDeltaTime; // funciona mesmo com Time.timeScale = 0
+                float volumeLinear = Mathf.Lerp(volumeLinearAtual, volumeLinearAlvo, tempo / duracao);
+                AplicarVolume(volumeLinear);
+                yield return null;
+            }
+            AplicarVolume(volumeLinearAlvo);
         }
 
-        audioSource.volume = 0;
-        audioSource.Stop();
+        if (pararAoFinalizar && volumeLinearAlvo <= 0f)
+            audioSource.Stop();
+
+        fadeCoroutine = null;
     }
 
-    public IEnumerator FadeIn(float duration)
+    private IEnumerator TrocarMusicaCoroutine(AudioClip novaMusica, float fadeOutDuration, float fadeInDuration)
     {
-        audioSource.volume = 0;
+        if (audioSource.isPlaying)
+        {
+            audioMixer.GetFloat(parametroVolume, out float dbAtual);
+            float volumeInicial = DbParaLinear(dbAtual);
+            float tempo = 0f;
+            while (tempo < fadeOutDuration)
+            {
+                tempo += Time.unscaledDeltaTime;
+                AplicarVolume(Mathf.Lerp(volumeInicial, 0f, tempo / fadeOutDuration));
+                yield return null;
+            }
+            AplicarVolume(0f);
+            audioSource.Stop();
+        }
 
-        if (!audioSource.isPlaying)
+        if (novaMusica != null)
+        {
+            audioSource.clip = novaMusica;
             audioSource.Play();
 
-        while (audioSource.volume < defaultVolume)
-        {
-            audioSource.volume += defaultVolume * Time.deltaTime / duration;
-            yield return null;
+            float tempo2 = 0f;
+            while (tempo2 < fadeInDuration)
+            {
+                tempo2 += Time.unscaledDeltaTime;
+                AplicarVolume(Mathf.Lerp(0f, volumeMaximo, tempo2 / fadeInDuration));
+                yield return null;
+            }
+            AplicarVolume(volumeMaximo);
         }
 
-        audioSource.volume = defaultVolume;
+        fadeCoroutine = null;
+    }
+
+    private void AplicarVolume(float volumeLinear01)
+    {
+        audioMixer.SetFloat(parametroVolume, LinearParaDb(volumeLinear01));
+    }
+
+    // dB e amplitude linear não são a mesma escala: o ouvido humano percebe volume
+    // de forma logarítmica, então convertendo assim o fade soa suave e natural.
+    private float LinearParaDb(float volumeLinear)
+    {
+        return volumeLinear > 0.0001f ? 20f * Mathf.Log10(volumeLinear) : VOLUME_MINIMO_DB;
+    }
+
+    private float DbParaLinear(float db)
+    {
+        return Mathf.Pow(10f, db / 20f);
     }
 }

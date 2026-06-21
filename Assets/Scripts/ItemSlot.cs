@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -18,29 +18,43 @@ public class ItemSlot : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
+        Debug.Log("Prralo");
         if (eventData.pointerDrag == null) return;
 
+        Debug.Log("Porralsk");
         var peca = eventData.pointerDrag.GetComponent<DragDrop>();
         if (peca == null) return;
+        Debug.Log("Porralsaaaaaaaaaaaaaaak");
 
         // rejeita tag errada
         if (eventData.pointerDrag.tag != gameObject.tag)
         {
+
+            Debug.Log("Prral");
             RejeitarPeca(peca);
             return;
         }
 
+        Debug.Log("Prssra");
         // rejeita tipo de peca errado pro slot
         if (peca.tipoPeca != tipoPeca)
         {
+
+            Debug.Log("Prrao");
             RejeitarPeca(peca);
             return;
         }
 
-        Debug.Log("BUG: VOCÊ PODE SOBREPOR PEÇAS");
         switch (tipoPeca)
         {
             case TipoPeca.Numero:
+                Debug.Log("Psrra");
+                if (pecasNoSlot.Count > 0)
+                {
+                    Debug.Log("Prra");
+                    RejeitarPeca(peca);
+                    break;
+                }
                 EncaixarPeca(peca);
                 break;
 
@@ -54,7 +68,7 @@ public class ItemSlot : MonoBehaviour, IDropHandler
     {
         if (pecasNoSlot.Count > 0 && pecasNoSlot[0].valorComida != peca.valorComida)
         {
-            Debug.Log("Tipo de comida errado — expulsando todas!");
+            Debug.Log("Tipo de comida errado ï¿½ expulsando todas!");
             ExpulsarTodasPecas();
             RejeitarPeca(peca);
             return;
@@ -97,7 +111,7 @@ public class ItemSlot : MonoBehaviour, IDropHandler
             OrganizarGrid();
         }
     }
-    
+
     public bool EstaCompleto()
     {
         if (tipoPeca == TipoPeca.Numero)
@@ -178,7 +192,7 @@ public class ItemSlot : MonoBehaviour, IDropHandler
         pecasNoSlot.Clear();
     }
 
-    // chamado pelo DragDrop quando o jogador começa a arrastar uma peca do slot
+    // chamado pelo DragDrop quando o jogador comeï¿½a a arrastar uma peca do slot
     public void RemoverDoSlot(DragDrop peca)
     {
         if (pecasNoSlot.Remove(peca))
