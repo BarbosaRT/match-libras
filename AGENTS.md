@@ -2,7 +2,7 @@
 - Project name: match-libras
 - Unity version: Unity 6000.3.11f1
 - Active game object:
-  - Name: Peça
-  - Tag: Numero
+  - Name: Canvas
+  - Tag: Untagged
   - Layer: UI
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->
