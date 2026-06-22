@@ -234,6 +234,7 @@ public class LevelManager : MonoBehaviour
         foreach (var slot in todosSlots)
             if (!slot.EstaCompleto()) { ExpulsarSlots(); return; }
 
+        SoundManager.Instance?.Play("Acerto");
         if (particulasAcerto != null)
             particulasAcerto.Play();
 
@@ -253,12 +254,14 @@ public class LevelManager : MonoBehaviour
 
     private void VitoriaFinal()
     {
+        SoundManager.Instance?.Play("VitoriaFinal");
         if (painelVitoria != null)
             painelVitoria.SetActive(true);
     }
 
     private void DerrotaFinal()
     {
+        SoundManager.Instance?.Play("DerrotaFinal");
         if (painelDerrota != null)
             painelDerrota.SetActive(true);
     }
@@ -267,6 +270,7 @@ public class LevelManager : MonoBehaviour
     {
         vidas--;
         AtualizarVidas();
+        SoundManager.Instance?.Play("PerderVida");
         ScreenShake.Instance?.Shake(shakeDuracao, shakeMagnitude);
         var todosSlots = FindObjectsByType<ItemSlot>(FindObjectsSortMode.None);
         foreach (var slot in todosSlots)
@@ -344,6 +348,7 @@ public class LevelManager : MonoBehaviour
         var obj = Instantiate(pecaPrefab, ParentTransform);
         obj.tag = tag;
         var peca = obj.GetComponent<DragDrop>();
+        peca.parentOriginal = ParentTransform;
         peca.tipoPeca = tipo;
         peca.valorNumero = valorNum;
         peca.valorComida = valorCom;

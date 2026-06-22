@@ -31,6 +31,7 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
     [field: SerializeField] public List<Sprite> ComidasSprites { get; private set; }
     // adicione esse campo
     public Vector2 PosicaoOriginal { get; private set; }
+    public Transform parentOriginal;
     [Header("Sombra")]
     public string nomeSombra = "Sombra"; // nome do filho Image de sombra
     public Image imagemSombra;
@@ -105,6 +106,9 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         if (slot != null)
             slot.RemoverDoSlot(this);
 
+        // salva o parent atual antes de subir pro canvas
+        parentOriginal = transform.parent;
+
         // reparenta pro canvas para ficar por cima de tudo
         var rootCanvas = GetComponentInParent<Canvas>();
         if (rootCanvas != null)
@@ -153,6 +157,10 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         if (escalaCoroutine != null) StopCoroutine(escalaCoroutine);
         escalaCoroutine = StartCoroutine(AnimarEscalaESombra(originalScale, alphaOriginalSombra, 0.15f));
         canvasGroup.blocksRaycasts = true;
+
+        // se nao foi aceito por nenhum slot, volta pro parent original
+        if (transform.parent != parentOriginal && parentOriginal != null)
+            transform.SetParent(parentOriginal, true);
 
         if (particulasAcerto != null)
             particulasAcerto.Play();
