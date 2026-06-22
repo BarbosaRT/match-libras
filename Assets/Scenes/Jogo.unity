@@ -6970,9 +6970,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 2108082205}
-        m_TargetAssemblyTypeName: SoundManager, Assembly-CSharp
-        m_MethodName: Play
+      - m_Target: {fileID: 1113778803}
+        m_TargetAssemblyTypeName: UIAudioButton, Assembly-CSharp
+        m_MethodName: TocarSom
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12883,6 +12883,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1095588563}
   m_CullTransparentMesh: 1
+--- !u!1 &1113778801
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1113778802}
+  - component: {fileID: 1113778803}
+  m_Layer: 0
+  m_Name: AudioUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1113778802
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113778801}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1113778803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113778801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e937faf2a6f40c742a67a5ff0fff0cf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIAudioButton
+  somId: Click
+  musicaParaTocar: {fileID: 0}
+  fadeMusica: 1
 --- !u!1 &1138413814
 GameObject:
   m_ObjectHideFlags: 0
@@ -13340,9 +13387,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 2108082205}
-        m_TargetAssemblyTypeName: SoundManager, Assembly-CSharp
-        m_MethodName: Play
+      - m_Target: {fileID: 1113778803}
+        m_TargetAssemblyTypeName: UIAudioButton, Assembly-CSharp
+        m_MethodName: TocarSom
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -15988,7 +16035,7 @@ MonoBehaviour:
     variacaoPitch: 0.1
   - id: VitoriaFinal
     clip: {fileID: 8300000, guid: 7cd205db5294a1d40b2dfd2f83b77929, type: 3}
-    volume: 1
+    volume: 0.665
     variacaoPitch: 0
   - id: DerrotaFinal
     clip: {fileID: 8300000, guid: 4bfbc2fa8bf23224aa423cd8eb592e04, type: 3}
@@ -16001,17 +16048,17 @@ MonoBehaviour:
   - id: Botao_1
     clip: {fileID: 8300000, guid: 3a12ff9f7336179428effbede5753570, type: 3}
     volume: 1
-    variacaoPitch: 0
+    variacaoPitch: 0.1
   - id: Botao_2
     clip: {fileID: 8300000, guid: 5938dfd059419a844b8af79c189e8450, type: 3}
     volume: 1
-    variacaoPitch: 0
+    variacaoPitch: 0.1
   - id: Erro
     clip: {fileID: 8300000, guid: 979c561b3386ca747b85933e4c12115c, type: 3}
     volume: 1
     variacaoPitch: 0
   - id: Acerto
-    clip: {fileID: 8300000, guid: 7cd205db5294a1d40b2dfd2f83b77929, type: 3}
+    clip: {fileID: 8300000, guid: f7909ae92f60be849835e486b1c209fb, type: 3}
     volume: 1
     variacaoPitch: 0
   audioSource: {fileID: 2108082204}
@@ -16160,3 +16207,4 @@ SceneRoots:
   - {fileID: 1953271623}
   - {fileID: 1991357661}
   - {fileID: 2108082208}
+  - {fileID: 1113778802}
