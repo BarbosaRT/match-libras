@@ -348,7 +348,6 @@ public class LevelManager : MonoBehaviour
         var obj = Instantiate(pecaPrefab, ParentTransform);
         obj.tag = tag;
         var peca = obj.GetComponent<DragDrop>();
-        peca.parentOriginal = ParentTransform;
         peca.tipoPeca = tipo;
         peca.valorNumero = valorNum;
         peca.valorComida = valorCom;
