@@ -152,7 +152,7 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
     {
         if (escalaCoroutine != null) StopCoroutine(escalaCoroutine);
         escalaCoroutine = StartCoroutine(AnimarEscalaESombra(originalScale, alphaOriginalSombra, 0.15f));
-        StartCoroutine(RestaurarRaycastsNoFrameSeguinte());
+        canvasGroup.blocksRaycasts = true;
 
         if (particulasAcerto != null)
             particulasAcerto.Play();
@@ -163,13 +163,6 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
             // da um leve impulso na direcao que estava arrastando ao soltar
             fisica.AplicarImpulso(eventData.delta * 3f);
         }
-    }
-
-    private IEnumerator RestaurarRaycastsNoFrameSeguinte()
-    {
-        yield return null;
-        if (GetComponentInParent<ItemSlot>() == null)
-            canvasGroup.blocksRaycasts = true;
     }
 
     private IEnumerator AnimarEscalaESombra(Vector3 escalaAlvo, float alphaAlvo, float duracao)
