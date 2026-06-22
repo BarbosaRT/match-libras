@@ -31,7 +31,9 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
     [field: SerializeField] public List<Sprite> ComidasSprites { get; private set; }
     // adicione esse campo
     public Vector2 PosicaoOriginal { get; private set; }
-    public Transform parentOriginal;
+    private Transform parentOriginal;
+    private bool foiTratadoNoDrop;
+    private bool foiAceitoNoSlot;
     [Header("Sombra")]
     public string nomeSombra = "Sombra"; // nome do filho Image de sombra
     public Image imagemSombra;
@@ -43,6 +45,21 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
     public void DefinirPosicaoOriginal()
     {
         PosicaoOriginal = rectTransform.anchoredPosition;
+    }
+
+    // chamado pelo ItemSlot quando REJEITA a peca (RejeitarPeca/ExpulsarTodasPecas) -
+    // avisa que o drop ja foi tratado, mas NAO foi aceito (sem particula de acerto).
+    public void MarcarTratadoNoDrop()
+    {
+        foiTratadoNoDrop = true;
+    }
+
+    // chamado pelo ItemSlot quando ACEITA a peca (EncaixarPeca) - conta como
+    // tratado E como aceito (dispara a particula de acerto no OnEndDrag).
+    public void MarcarAceitoNoSlot()
+    {
+        foiTratadoNoDrop = true;
+        foiAceitoNoSlot = true;
     }
 
     public void VoltarParaOrigem(float duracao, MonoBehaviour runner)
@@ -108,6 +125,8 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 
         // salva o parent atual antes de subir pro canvas
         parentOriginal = transform.parent;
+        foiTratadoNoDrop = false;
+        foiAceitoNoSlot = false;
 
         // reparenta pro canvas para ficar por cima de tudo
         var rootCanvas = GetComponentInParent<Canvas>();
@@ -158,11 +177,20 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         escalaCoroutine = StartCoroutine(AnimarEscalaESombra(originalScale, alphaOriginalSombra, 0.15f));
         canvasGroup.blocksRaycasts = true;
 
-        // se nao foi aceito por nenhum slot, volta pro parent original
-        if (transform.parent != parentOriginal && parentOriginal != null)
-            transform.SetParent(parentOriginal, true);
+        // NAO reparentamos aqui no caso normal. A ordem de eventos do Unity
+        // garante que ItemSlot.OnDrop() (EncaixarPeca/RejeitarPeca) roda
+        // ANTES deste OnEndDrag, e ambos chamam MarcarTratadoNoDrop() -
+        // EncaixarPeca ja deixou a peca filha do slot, RejeitarPeca ja
+        // chamou VoltarParaOrigem sozinho. Em nenhum dos dois casos devemos
+        // tocar no parent aqui.
+        //
+        // O unico caso nao coberto e quando a peca e soltada fora de
+        // qualquer ItemSlot (nenhum OnDrop disparou, foiTratadoNoDrop ainda
+        // false) - aqui sim mandamos ela de volta pra origem.
+        if (!foiTratadoNoDrop)
+            VoltarParaOrigem(0.3f, this);
 
-        if (particulasAcerto != null)
+        if (particulasAcerto != null && foiAceitoNoSlot)
             particulasAcerto.Play();
         var fisica = GetComponent<PecaFisica>();
         if (fisica != null)
