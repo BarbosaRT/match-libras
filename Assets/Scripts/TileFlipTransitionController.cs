@@ -21,14 +21,10 @@ public class TileFlipTransitionController : MonoBehaviour
     public float fadeOutMusica = 1f;
     public float fadeInMusica = 1f;
 
-    void Awake()
-    {
-        // O controller sobrevive junto com o canvas
-        DontDestroyOnLoad(gameObject);
-    }
 
     public void PlayTransition()
     {
+        DontDestroyOnLoad(gameObject);
         StartCoroutine(DoTransition());
     }
 

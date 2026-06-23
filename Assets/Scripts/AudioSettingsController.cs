@@ -30,6 +30,8 @@ public class AudioSettingsController : MonoBehaviour
 
         if (sliderMusica != null)
         {
+            // SetValueWithoutNotify apenas move a bolinha do slider visualmente,
+            // sem disparar o evento que mata a nossa coroutine.
             sliderMusica.SetValueWithoutNotify(volumeMusica);
             sliderMusica.onValueChanged.AddListener(OnMusicaChanged);
         }
@@ -40,9 +42,10 @@ public class AudioSettingsController : MonoBehaviour
             sliderEfeitos.onValueChanged.AddListener(OnEfeitosChanged);
         }
 
-        // Aplica os valores salvos/atuais assim que a tela abre
-        OnMusicaChanged(volumeMusica);
-        OnEfeitosChanged(volumeSfx);
+        // DELETADAS AS DUAS LINHAS ABAIXO:
+        // Elas estavam matando a transição de música ao carregar a nova cena!
+        // OnMusicaChanged(volumeMusica);
+        // OnEfeitosChanged(volumeSfx);
     }
 
     public void OnMusicaChanged(float valorLinear)

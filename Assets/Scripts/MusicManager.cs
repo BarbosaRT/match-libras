@@ -54,8 +54,19 @@ public class MusicManager : MonoBehaviour
 
     void Start()
     {
+        // 1. Lê o volume salvo (ou 1f se for a primeira vez)
+        volumeMaximo = PlayerPrefs.GetFloat("VolumeMusica", 1f);
+
         if (tocarAoIniciar && musicaInicial != null)
+        {
+            // O fade já vai usar o 'volumeMaximo' atualizado automaticamente
             PlayMusic(musicaInicial, duracaoFadeDefault);
+        }
+        else
+        {
+            // Se não for tocar música no início, já aplica o volume correto no Mixer
+            audioMixer.SetFloat(parametroVolume, LinearParaDb(volumeMaximo));
+        }
     }
 
     // ── API PÚBLICA ──────────────────────────────────────────────────
@@ -63,6 +74,9 @@ public class MusicManager : MonoBehaviour
     /// <summary>
     /// Toca uma música com fade-in. Se já estiver tocando a mesma música, não faz nada.
     /// </summary>
+    /// 
+
+
     public void PlayMusic(AudioClip clip, float fadeInDuration = -1f)
     {
         if (clip == null) return;
@@ -100,10 +114,12 @@ public class MusicManager : MonoBehaviour
     public void SetVolume(float volumeAlvo, float duracao = -1f)
     {
         if (duracao < 0f) duracao = duracaoFadeDefault;
+        volumeMaximo = volumeAlvo;
         IniciarFade(Mathf.Clamp01(volumeAlvo), duracao);
     }
     public void SetVolumeSlider(float volumeAlvo)
     {
+        volumeMaximo = volumeAlvo;
         IniciarFade(Mathf.Clamp01(volumeAlvo), 0);
     }
 

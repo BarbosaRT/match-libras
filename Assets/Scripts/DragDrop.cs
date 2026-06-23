@@ -35,7 +35,11 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
     private Transform parentOriginal;
     private bool foiTratadoNoDrop;
     private bool foiAceitoNoSlot;
-
+    // Variáveis para gerenciar o Canvas interno e partículas
+    private Canvas canvasInterno;
+    private int ordemOriginalCanvasInterno;
+    private ParticleSystemRenderer dustRenderer;
+    private int ordemOriginalDust;
     [Header("Sombra")]
     public string nomeSombra = "Sombra";
     public Image imagemSombra;
@@ -142,22 +146,40 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         foiTratadoNoDrop = false;
         foiAceitoNoSlot = false;
 
-        // REMOVIDO: O trecho que mudava o parent para o rootCanvas.
-        // A peça precisa continuar no 'containerPecas' para que a física das 
-        // outras peças consiga calcular a distância corretamente usando anchoredPosition.
-
         if (escalaCoroutine != null) StopCoroutine(escalaCoroutine);
         escalaCoroutine = StartCoroutine(AnimarEscalaESombra(originalScale * scaleMultiplier, 1f, 0.15f));
 
         canvasGroup.blocksRaycasts = false;
-
-        // A peça arrastada ainda pausa a PRÓPRIA física para seguir o mouse sem tremer.
         GetComponent<PecaFisica>()?.PausarFisica();
 
-        // MODIFICADO: Trocamos SetAsLastSibling() por SetAsFirstSibling().
-        // Isso coloca o objeto no topo da hierarquia, o que na Unity UI significa
-        // que ele será renderizado PRIMEIRO, ficando sob (por baixo de) todas as outras peças.
         rectTransform.SetAsLastSibling();
+        rectTransform.anchoredPosition3D = new Vector3(rectTransform.anchoredPosition.x, rectTransform.anchoredPosition.y, 0f);
+
+        // 1. CANVAS RAIZ (Afeta a Sombra)
+        Canvas canvasLocal = GetComponent<Canvas>();
+        if (canvasLocal == null) canvasLocal = gameObject.AddComponent<Canvas>();
+        canvasLocal.overrideSorting = true;
+        canvasLocal.sortingOrder = 990; // Sombra fica no 990
+
+        // 2. CANVAS INTERNO (Afeta Base e Tipo)
+        canvasInterno = transform.Find("Canvas")?.GetComponent<Canvas>();
+        if (canvasInterno != null)
+        {
+            ordemOriginalCanvasInterno = canvasInterno.sortingOrder;
+            canvasInterno.sortingOrder = 995; // 995 é maior que 990, então fica ACIMA da sombra
+        }
+
+        // 3. PARTÍCULAS (Dust)
+        Transform dustTransform = transform.Find("Dust");
+        if (dustTransform != null)
+        {
+            dustRenderer = dustTransform.GetComponent<ParticleSystemRenderer>();
+            if (dustRenderer != null)
+            {
+                ordemOriginalDust = dustRenderer.sortingOrder;
+                dustRenderer.sortingOrder = 985; // 985 é menor que 990, então fica ABAIXO da sombra
+            }
+        }
 
         StartCoroutine(AnimarRotacao(Quaternion.identity, 0.15f));
 
@@ -189,32 +211,42 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         escalaCoroutine = StartCoroutine(AnimarEscalaESombra(originalScale, alphaOriginalSombra, 0.15f));
         canvasGroup.blocksRaycasts = true;
 
-        // CORREÇÃO: Assim que o jogador solta a peça, jogamos ela para o final da hierarquia (Last Sibling).
-        // Isso faz com que ela volte a ser renderizada por CIMA dos fundos e outros elementos,
-        // liberando o Raycast para que ela possa ser clicada e movida novamente.
         rectTransform.SetAsLastSibling();
+        rectTransform.anchoredPosition3D = new Vector3(rectTransform.anchoredPosition.x, rectTransform.anchoredPosition.y, 0f);
+
+        // REMOVE O CANVAS TEMPORÁRIO DA RAIZ
+        Canvas canvasLocal = GetComponent<Canvas>();
+        if (canvasLocal != null)
+        {
+            Destroy(canvasLocal);
+        }
+
+        // RESTAURA O CANVAS INTERNO
+        if (canvasInterno != null)
+        {
+            canvasInterno.sortingOrder = ordemOriginalCanvasInterno;
+        }
+
+        // RESTAURA AS PARTÍCULAS
+        if (dustRenderer != null)
+        {
+            dustRenderer.sortingOrder = ordemOriginalDust;
+        }
 
         if (!foiTratadoNoDrop)
         {
-            // 1. Em vez de voltar para a origem, reparenta para o container original (onde a física atua)
             Transform alvo = parentOriginal != null ? parentOriginal : GetComponentInParent<Canvas>().transform;
             transform.SetParent(alvo, true);
-
-            // 2. Define o local atual como a nova posição original para evitar saltos indesejados
             DefinirPosicaoOriginal();
-
-            // 3. Retoma a física aplicando a força do movimento do mouse (impulso)
             GetComponent<PecaFisica>()?.RetomarFisica(eventData.delta * 3f);
         }
         else if (foiAceitoNoSlot)
         {
-            // Foi aceito pelo slot — retoma fisica com impulso.
             GetComponent<PecaFisica>()?.RetomarFisica(eventData.delta * 3f);
 
             if (particulasAcerto != null)
                 particulasAcerto.Play();
         }
-        // Caso rejeitado, o ItemSlot já chamou VoltarParaOrigem.
     }
 
     private IEnumerator AnimarEscalaESombra(Vector3 escalaAlvo, float alphaAlvo, float duracao)
