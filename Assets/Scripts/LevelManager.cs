@@ -55,6 +55,9 @@ public class LevelManager : MonoBehaviour
     // Propriedade auxiliar para obter o transform pai das peças
     private Transform ParentTransform => containerPecas != null ? containerPecas : canvas.transform;
 
+    // Versao publica para ItemSlot.RemoverDoSlot reparentar para o container correto.
+    public Transform PecasParent => ParentTransform;
+
     void Start()
     {
         numeros = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
@@ -348,12 +351,13 @@ public class LevelManager : MonoBehaviour
         var obj = Instantiate(pecaPrefab, ParentTransform);
         obj.tag = tag;
         var peca = obj.GetComponent<DragDrop>();
+        peca.DefinirParentOriginal(ParentTransform);
         peca.tipoPeca = tipo;
         peca.valorNumero = valorNum;
         peca.valorComida = valorCom;
         peca.AplicarSprite();
         var fisica = obj.GetComponent<PecaFisica>();
-        if (fisica != null) fisica.Inicializar(canvas, areaDeSpawn);
+        if (fisica != null) fisica.Inicializar(canvas, areaDeSpawn, ParentTransform);
         return obj;
     }
 

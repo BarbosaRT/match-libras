@@ -13,18 +13,19 @@ public class PecaFisica : MonoBehaviour
     private RectTransform rt;
     private Canvas canvas;
     private RectTransform areaDeSpawn;
+    private Transform containerPecas;
     private Vector2 velocidade;
 
-    // lista estatica compartilhada entre todas as instancias
     private static List<PecaFisica> todasAtivas = new List<PecaFisica>();
 
     public bool Arrastando { get; private set; } = false;
 
-    public void Inicializar(Canvas canvas, RectTransform area)
+    public void Inicializar(Canvas canvas, RectTransform area, Transform container = null)
     {
         rt = GetComponent<RectTransform>();
         this.canvas = canvas;
         this.areaDeSpawn = area;
+        this.containerPecas = container != null ? container : canvas.transform;
         todasAtivas.Add(this);
     }
 
@@ -50,11 +51,16 @@ public class PecaFisica : MonoBehaviour
     private void Update()
     {
         if (Arrastando || rt == null) return;
-        if (transform.parent != canvas.transform) return;
-        // repulsao continua contra todas as outras pecas
+        if (transform.parent != containerPecas) return;
+
+        // repulsao entre pecas (todas no mesmo container, anchoredPosition comparavel)
         foreach (var outra in todasAtivas)
         {
-            if (outra == this || outra == null || outra.Arrastando) continue;
+            // REMOVIDO: '|| outra.Arrastando'.
+            // Agora, se a 'outra' peça estiver sendo arrastada pelo mouse, a peça solta 
+            // ainda vai calcular a distância e ser empurrada para longe dela!
+            if (outra == this || outra == null) continue;
+
             if (outra.rt == null) continue;
 
             Vector2 delta = rt.anchoredPosition - outra.rt.anchoredPosition;
@@ -68,13 +74,10 @@ public class PecaFisica : MonoBehaviour
             }
         }
 
-        // move
         rt.anchoredPosition += velocidade * Time.deltaTime;
 
-        // paredes
         ColidiComParedes();
 
-        // atrito
         velocidade = Vector2.Lerp(velocidade, Vector2.zero, atrito * Time.deltaTime);
 
         if (velocidade.magnitude < 0.5f)
@@ -88,7 +91,9 @@ public class PecaFisica : MonoBehaviour
     {
         if (areaDeSpawn == null) return;
 
-        Vector3 worldPos = canvas.GetComponent<RectTransform>().TransformPoint(rt.anchoredPosition);
+        // Usa rt.position (espaco de mundo) em vez de anchoredPosition tratado como
+        // coordenada de canvas — assim funciona independente de qual parent a peca esta.
+        Vector3 worldPos = rt.position;
         Vector3 localPos = areaDeSpawn.InverseTransformPoint(worldPos);
         Rect rect = areaDeSpawn.rect;
         bool colidiu = false;
@@ -101,13 +106,18 @@ public class PecaFisica : MonoBehaviour
         if (colidiu)
         {
             Vector3 clampedWorld = areaDeSpawn.TransformPoint(localPos);
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                canvas.GetComponent<RectTransform>(),
-                RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, clampedWorld),
-                canvas.worldCamera,
-                out Vector2 canvasLocal
-            );
-            rt.anchoredPosition = canvasLocal;
+            // Converte de volta para anchoredPosition relativo ao parent ATUAL da peca
+            RectTransform parentRT = rt.parent as RectTransform;
+            if (parentRT != null)
+            {
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    parentRT,
+                    RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, clampedWorld),
+                    canvas.worldCamera,
+                    out Vector2 localAnchoredPos
+                );
+                rt.anchoredPosition = localAnchoredPos;
+            }
         }
     }
 

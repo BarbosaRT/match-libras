@@ -13,11 +13,12 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
     private Vector3 originalScale;
     public float scaleMultiplier = 1.2f;
 
-    private Canvas canvas; // usa o canvas.scaleFactor caso precise
+    private Canvas canvas;
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
     private Vector2 lastMouseLocalPos;
-    [Header("Tipo da Peça")]
+
+    [Header("Tipo da Peca")]
     public TipoPeca tipoPeca;
 
     [HideInInspector] public ValorNumero valorNumero;
@@ -29,13 +30,14 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 
     [field: SerializeField] public List<Sprite> NumeroSprites { get; private set; }
     [field: SerializeField] public List<Sprite> ComidasSprites { get; private set; }
-    // adicione esse campo
+
     public Vector2 PosicaoOriginal { get; private set; }
     private Transform parentOriginal;
     private bool foiTratadoNoDrop;
     private bool foiAceitoNoSlot;
+
     [Header("Sombra")]
-    public string nomeSombra = "Sombra"; // nome do filho Image de sombra
+    public string nomeSombra = "Sombra";
     public Image imagemSombra;
     private float alphaOriginalSombra;
     public ParticleSystem particulasAcerto;
@@ -47,33 +49,47 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         PosicaoOriginal = rectTransform.anchoredPosition;
     }
 
-    // chamado pelo ItemSlot quando REJEITA a peca (RejeitarPeca/ExpulsarTodasPecas) -
-    // avisa que o drop ja foi tratado, mas NAO foi aceito (sem particula de acerto).
+    // Chamado por LevelManager ao spawnar a peca, garante que parentOriginal
+    // esta correto mesmo antes do primeiro drag.
+    public void DefinirParentOriginal(Transform parent)
+    {
+        parentOriginal = parent;
+    }
+
+    // Chamado por ItemSlot quando REJEITA a peca.
     public void MarcarTratadoNoDrop()
     {
         foiTratadoNoDrop = true;
     }
 
-    // chamado pelo ItemSlot quando ACEITA a peca (EncaixarPeca) - conta como
-    // tratado E como aceito (dispara a particula de acerto no OnEndDrag).
+    // Chamado por ItemSlot quando ACEITA a peca.
     public void MarcarAceitoNoSlot()
     {
         foiTratadoNoDrop = true;
         foiAceitoNoSlot = true;
     }
 
+    // Anima a peca de volta para PosicaoOriginal dentro do parentOriginal.
+    // Pausa a fisica durante a animacao e a retoma ao terminar.
     public void VoltarParaOrigem(float duracao, MonoBehaviour runner)
     {
-        // devolve ao canvas antes de animar
-        transform.SetParent(runner.GetComponentInParent<Canvas>().transform, true);
+        // Reparenta para o container correto (containerPecas), nao para o canvas raiz.
+        // PosicaoOriginal esta em espaco de containerPecas, entao o parent precisa ser o mesmo.
+        Transform alvo = parentOriginal != null
+            ? parentOriginal
+            : runner.GetComponentInParent<Canvas>().transform;
+
+        transform.SetParent(alvo, true);
         GetComponent<CanvasGroup>().blocksRaycasts = false;
+
+        // Pausa fisica para nao conflitar com a animacao de volta.
+        GetComponent<PecaFisica>()?.PausarFisica();
+
         runner.StartCoroutine(AnimarVolta(duracao));
     }
 
     private IEnumerator AnimarVolta(float duracao)
     {
-        canvasGroup.blocksRaycasts = false;
-
         Vector2 atual = rectTransform.anchoredPosition;
         float tempo = 0f;
 
@@ -87,7 +103,11 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 
         rectTransform.anchoredPosition = PosicaoOriginal;
         canvasGroup.blocksRaycasts = true;
+
+        // Retoma fisica sem impulso — peca chegou na origem, fica quieta.
+        GetComponent<PecaFisica>()?.RetomarFisica(Vector2.zero);
     }
+
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -102,7 +122,6 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         }
     }
 
-    // Chame este método após definir tipoPeca e valorNumero/valorComida
     public void AplicarSprite()
     {
         if (tipoPeca == TipoPeca.Numero)
@@ -111,38 +130,35 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
             imageTipo.sprite = ComidasSprites[(int)valorComida];
     }
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        //Debug.Log("Clicked");
-    }
+    public void OnPointerDown(PointerEventData eventData) { }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // avisa o slot pai se estiver encaixada em um
         var slot = GetComponentInParent<ItemSlot>();
         if (slot != null)
             slot.RemoverDoSlot(this);
 
-        // salva o parent atual antes de subir pro canvas
         parentOriginal = transform.parent;
         foiTratadoNoDrop = false;
         foiAceitoNoSlot = false;
 
-        // reparenta pro canvas para ficar por cima de tudo
-        var rootCanvas = GetComponentInParent<Canvas>();
-        if (rootCanvas != null)
-            transform.SetParent(rootCanvas.transform, true);
+        // REMOVIDO: O trecho que mudava o parent para o rootCanvas.
+        // A peça precisa continuar no 'containerPecas' para que a física das 
+        // outras peças consiga calcular a distância corretamente usando anchoredPosition.
 
         if (escalaCoroutine != null) StopCoroutine(escalaCoroutine);
         escalaCoroutine = StartCoroutine(AnimarEscalaESombra(originalScale * scaleMultiplier, 1f, 0.15f));
 
         canvasGroup.blocksRaycasts = false;
-        var fisica = GetComponent<PecaFisica>();
-        if (fisica != null)
-        {
-            fisica.enabled = false;
-        }
+
+        // A peça arrastada ainda pausa a PRÓPRIA física para seguir o mouse sem tremer.
+        GetComponent<PecaFisica>()?.PausarFisica();
+
+        // MODIFICADO: Trocamos SetAsLastSibling() por SetAsFirstSibling().
+        // Isso coloca o objeto no topo da hierarquia, o que na Unity UI significa
+        // que ele será renderizado PRIMEIRO, ficando sob (por baixo de) todas as outras peças.
         rectTransform.SetAsLastSibling();
+
         StartCoroutine(AnimarRotacao(Quaternion.identity, 0.15f));
 
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
@@ -155,7 +171,6 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 
     public void OnDrag(PointerEventData eventData)
     {
-        // Converte a posição atual do mouse para o espaço local do canvas
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             canvas.GetComponent<RectTransform>(),
             eventData.position,
@@ -163,12 +178,9 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
             out Vector2 currentMouseLocalPos
         );
 
-        // Delta real no espaço do canvas
         Vector2 delta = currentMouseLocalPos - lastMouseLocalPos;
         rectTransform.anchoredPosition += delta;
-
         lastMouseLocalPos = currentMouseLocalPos;
-        //rectTransform.anchoredPosition += eventData.delta;
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -177,28 +189,32 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         escalaCoroutine = StartCoroutine(AnimarEscalaESombra(originalScale, alphaOriginalSombra, 0.15f));
         canvasGroup.blocksRaycasts = true;
 
-        // NAO reparentamos aqui no caso normal. A ordem de eventos do Unity
-        // garante que ItemSlot.OnDrop() (EncaixarPeca/RejeitarPeca) roda
-        // ANTES deste OnEndDrag, e ambos chamam MarcarTratadoNoDrop() -
-        // EncaixarPeca ja deixou a peca filha do slot, RejeitarPeca ja
-        // chamou VoltarParaOrigem sozinho. Em nenhum dos dois casos devemos
-        // tocar no parent aqui.
-        //
-        // O unico caso nao coberto e quando a peca e soltada fora de
-        // qualquer ItemSlot (nenhum OnDrop disparou, foiTratadoNoDrop ainda
-        // false) - aqui sim mandamos ela de volta pra origem.
-        if (!foiTratadoNoDrop)
-            VoltarParaOrigem(0.3f, this);
+        // CORREÇÃO: Assim que o jogador solta a peça, jogamos ela para o final da hierarquia (Last Sibling).
+        // Isso faz com que ela volte a ser renderizada por CIMA dos fundos e outros elementos,
+        // liberando o Raycast para que ela possa ser clicada e movida novamente.
+        rectTransform.SetAsLastSibling();
 
-        if (particulasAcerto != null && foiAceitoNoSlot)
-            particulasAcerto.Play();
-        var fisica = GetComponent<PecaFisica>();
-        if (fisica != null)
+        if (!foiTratadoNoDrop)
         {
-            fisica.enabled = true;
-            // da um leve impulso na direcao que estava arrastando ao soltar
-            fisica.AplicarImpulso(eventData.delta * 3f);
+            // 1. Em vez de voltar para a origem, reparenta para o container original (onde a física atua)
+            Transform alvo = parentOriginal != null ? parentOriginal : GetComponentInParent<Canvas>().transform;
+            transform.SetParent(alvo, true);
+
+            // 2. Define o local atual como a nova posição original para evitar saltos indesejados
+            DefinirPosicaoOriginal();
+
+            // 3. Retoma a física aplicando a força do movimento do mouse (impulso)
+            GetComponent<PecaFisica>()?.RetomarFisica(eventData.delta * 3f);
         }
+        else if (foiAceitoNoSlot)
+        {
+            // Foi aceito pelo slot — retoma fisica com impulso.
+            GetComponent<PecaFisica>()?.RetomarFisica(eventData.delta * 3f);
+
+            if (particulasAcerto != null)
+                particulasAcerto.Play();
+        }
+        // Caso rejeitado, o ItemSlot já chamou VoltarParaOrigem.
     }
 
     private IEnumerator AnimarEscalaESombra(Vector3 escalaAlvo, float alphaAlvo, float duracao)
@@ -242,8 +258,5 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         rectTransform.rotation = alvo;
     }
 
-    private float EaseInOut(float t)
-    {
-        return t * t * (3f - 2f * t); // smoothstep equivalente
-    }
+    private float EaseInOut(float t) => t * t * (3f - 2f * t);
 }
