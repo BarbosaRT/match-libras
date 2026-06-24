@@ -6,4 +6,4 @@ public enum ValorNumero
     Cinco, Seis, Sete, Oito, Nove
 }
 
-public enum ValorComida { Uva, Hamburger, Sorvete, Maca, Cereja, Cenoura, Brocolis, Pizza, Milho, Melancia}
+public enum ValorComida { Uva, Hamburger, Sorvete, Maca, Cenoura, Brocolis, Pizza, Milho, Melancia}

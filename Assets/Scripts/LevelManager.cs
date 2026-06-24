@@ -213,6 +213,13 @@ public class LevelManager : MonoBehaviour
         Embaralhar(disponiveis);
         lista.Add((TipoPeca.Numero, (ValorNumero)disponiveis[0], comidaCorreta, "Numero"));
 
+        int quantidadeNumerosDistratores = Random.Range(2, 5); // Ajuste os valores
+        for (int i = 0; i < quantidadeNumerosDistratores && i < disponiveis.Count; i++)
+        {
+            lista.Add((TipoPeca.Numero, (ValorNumero)disponiveis[i], comidaCorreta, "Numero"));
+        }
+
+
         int totalDistratores = Random.Range(1, 10);
         var outrosTipos = new List<ValorComida>();
         foreach (ValorComida v in System.Enum.GetValues(typeof(ValorComida)))
@@ -257,10 +264,12 @@ public class LevelManager : MonoBehaviour
 
     private void VitoriaFinal()
     {
+        Cronometro.Instance?.Parar();
         SoundManager.Instance?.Play("VitoriaFinal");
         if (painelVitoria != null)
             painelVitoria.SetActive(true);
     }
+
 
     private void DerrotaFinal()
     {

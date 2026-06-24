@@ -22,6 +22,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Resume()
     {
+        Cronometro.Instance.Retomar();
         pauseMenuUI.SetActive(false);
         Time.timeScale = 1f;   // retoma o tempo do jogo
         isPaused = false;
@@ -29,6 +30,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
+        Cronometro.Instance.Pausar();
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;   // congela o tempo do jogo
         isPaused = true;

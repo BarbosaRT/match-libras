@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.U2D;
 using UnityEngine.UI;
 
-public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
+public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerClickHandler
 {
     public Image imageTipo;
     private Vector3 originalScale;
@@ -52,7 +52,39 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
     {
         PosicaoOriginal = rectTransform.anchoredPosition;
     }
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.clickCount == 2)
+        {
+            var slotAtual = GetComponentInParent<ItemSlot>();
 
+            // SE A PEÇA JÁ ESTÁ NO SLOT: Remove e devolve para a base (origem)
+            if (slotAtual != null)
+            {
+                slotAtual.RemoverDoSlot(this);
+                SoundManager.Instance?.Play("Drag_1");
+
+                // Aproveitamos a sua função que já faz a animação suave e pausa a física!
+                VoltarParaOrigem(0.2f, this);
+
+                return; // Interrompe aqui para ela não tentar ir para outro slot
+            }
+
+            // SE A PEÇA NÃO ESTÁ NO SLOT: Procura um slot válido e envia para lá
+            ItemSlot[] slots = FindObjectsByType<ItemSlot>(FindObjectsSortMode.None);
+
+            foreach (var slot in slots)
+            {
+                if (slot.PodeAceitarPeca(this))
+                {
+                    SoundManager.Instance?.Play("Drag_1");
+                    parentOriginal = transform.parent;
+                    slot.AutoEncaixarPeca(this);
+                    break;
+                }
+            }
+        }
+    }
     // Chamado por LevelManager ao spawnar a peca, garante que parentOriginal
     // esta correto mesmo antes do primeiro drag.
     public void DefinirParentOriginal(Transform parent)
@@ -151,6 +183,7 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
 
         canvasGroup.blocksRaycasts = false;
         GetComponent<PecaFisica>()?.PausarFisica();
+        SoundManager.Instance?.Play("Drag_1");
 
         rectTransform.SetAsLastSibling();
         rectTransform.anchoredPosition3D = new Vector3(rectTransform.anchoredPosition.x, rectTransform.anchoredPosition.y, 0f);
@@ -159,14 +192,14 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         Canvas canvasLocal = GetComponent<Canvas>();
         if (canvasLocal == null) canvasLocal = gameObject.AddComponent<Canvas>();
         canvasLocal.overrideSorting = true;
-        canvasLocal.sortingOrder = 990; // Sombra fica no 990
+        canvasLocal.sortingOrder = 4; // Sombra fica no 990
 
         // 2. CANVAS INTERNO (Afeta Base e Tipo)
         canvasInterno = transform.Find("Canvas")?.GetComponent<Canvas>();
         if (canvasInterno != null)
         {
             ordemOriginalCanvasInterno = canvasInterno.sortingOrder;
-            canvasInterno.sortingOrder = 995; // 995 é maior que 990, então fica ACIMA da sombra
+            canvasInterno.sortingOrder = 5; // 995 é maior que 990, então fica ACIMA da sombra
         }
 
         // 3. PARTÍCULAS (Dust)
@@ -274,7 +307,7 @@ public class DragDrop : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, I
         rectTransform.localScale = escalaAlvo;
     }
 
-    private IEnumerator AnimarRotacao(Quaternion alvo, float duracao)
+    public IEnumerator AnimarRotacao(Quaternion alvo, float duracao)
     {
         Quaternion inicial = rectTransform.rotation;
         float tempo = 0f;
