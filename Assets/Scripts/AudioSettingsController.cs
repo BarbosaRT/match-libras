@@ -1,14 +1,10 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
-/// <summary>
-/// Conecta sliders de configurações ao volume de Música (via MusicManager) e de
-/// Efeitos Sonoros (via outro AudioMixer/grupo). Coloque na tela de Settings.
-/// </summary>
 public class AudioSettingsController : MonoBehaviour
 {
-    [Header("Slider de Música (usa o MusicManager existente)")]
+    [Header("Slider de MÃºsica (usa o MusicManager existente)")]
     public Slider sliderMusica;
 
     [Header("Slider de Efeitos Sonoros")]
@@ -16,8 +12,18 @@ public class AudioSettingsController : MonoBehaviour
     public AudioMixer sfxMixer; // pode ser o mesmo asset do MusicManager (outro grupo) ou um AudioMixer separado
     public string sfxParametro = "SFXVolume";
 
-    [Header("Persistência (opcional)")]
+    [Header("PersistÄ™ncia (opcional)")]
     public bool salvarPreferencias = true;
+
+    [Header("Imagens para MÃºsica")]
+    public Image musicaImagem;
+    public Sprite musicaOnSprite;
+    public Sprite musicaOffSprite;
+
+    [Header("Imagens para SFX")]
+    public Image sfxImagem;
+    public Sprite sfxOnSprite;
+    public Sprite sfxOffSprite;
 
     private const string PREF_MUSICA = "VolumeMusica";
     private const string PREF_SFX = "VolumeEfeitos";
@@ -43,9 +49,13 @@ public class AudioSettingsController : MonoBehaviour
         }
 
         // DELETADAS AS DUAS LINHAS ABAIXO:
-        // Elas estavam matando a transição de música ao carregar a nova cena!
+        // Elas estavam matando a transiÃ§Äƒo de mÃºsica ao carregar a nova cena!
         // OnMusicaChanged(volumeMusica);
         // OnEfeitosChanged(volumeSfx);
+
+        // Atualiza as imagens com os volumes iniciais
+        AtualizarImagemMusica(volumeMusica);
+        AtualizarImagemSFX(volumeSfx);
     }
 
     public void OnMusicaChanged(float valorLinear)
@@ -56,6 +66,8 @@ public class AudioSettingsController : MonoBehaviour
 
         if (salvarPreferencias)
             PlayerPrefs.SetFloat(PREF_MUSICA, valorLinear);
+
+        AtualizarImagemMusica(valorLinear);
     }
 
     public void OnEfeitosChanged(float valorLinear)
@@ -65,10 +77,31 @@ public class AudioSettingsController : MonoBehaviour
 
         if (salvarPreferencias)
             PlayerPrefs.SetFloat(PREF_SFX, valorLinear);
+
+        AtualizarImagemSFX(valorLinear);
     }
 
     private float LinearParaDb(float volumeLinear)
     {
         return volumeLinear > 0.0001f ? 20f * Mathf.Log10(volumeLinear) : VOLUME_MINIMO_DB;
+    }
+
+    private void AtualizarImagemMusica(float volume)
+    {
+        if (musicaImagem != null)
+        {
+            // Considera que o volume Ã© zero quando Ã© menor ou igual a 0.0001f
+            bool isMuted = volume <= 0.0001f;
+            musicaImagem.sprite = isMuted ? musicaOffSprite : musicaOnSprite;
+        }
+    }
+
+    private void AtualizarImagemSFX(float volume)
+    {
+        if (sfxImagem != null)
+        {
+            bool isMuted = volume <= 0.0001f;
+            sfxImagem.sprite = isMuted ? sfxOffSprite : sfxOnSprite;
+        }
     }
 }
