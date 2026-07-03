@@ -3685,7 +3685,7 @@ MonoBehaviour:
     volume: 1
     variacaoPitch: 0
   - id: PerderVida
-    clip: {fileID: 8300000, guid: 59cea3f08c6f3fe408245192a55d248c, type: 3}
+    clip: {fileID: 8300000, guid: 95481543b5429644e9c97291a5923685, type: 3}
     volume: 1
     variacaoPitch: 0
   - id: Botao_1
