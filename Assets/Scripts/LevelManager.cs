@@ -52,11 +52,41 @@ public class LevelManager : MonoBehaviour
     private int vidas = 3;
     private List<int> numeros = new List<int>();
 
+    [Header("Controle Externo (Tutorial)")]
+    [Tooltip("Desative se um TutorialSequence for controlar o spawn manualmente. O TutorialSequence.Awake() ja desliga isso sozinho.")]
+    public bool iniciarAutomaticamente = true;
+
     // Propriedade auxiliar para obter o transform pai das peças
     private Transform ParentTransform => containerPecas != null ? containerPecas : canvas.transform;
 
     // Versao publica para ItemSlot.RemoverDoSlot reparentar para o container correto.
     public Transform PecasParent => ParentTransform;
+
+    // ── ACESSO PARA O TUTORIAL ─────────────────────────────────────────
+    // Permite que o TutorialSequence encontre, entre as pecas ja spawnadas,
+    // qual e o numero certo e quais sao as comidas certas para demonstrar.
+    public IReadOnlyList<GameObject> TodasPecas => todasPecas;
+    public ValorComida ComidaCorreta => comidaCorreta;
+
+    /// Spawna uma rodada forcando um numero especifico (usado pelo tutorial),
+    /// em vez de tirar o proximo numero da fila embaralhada (numeros).
+    /// Nao mexe na fila "numeros", entao nao afeta o jogo normal depois.
+    public void SpawnarRodadaParaTutorial(int numeroForcado)
+    {
+        // Limpa qualquer peca de uma rodada anterior (evita que a busca do
+        // tutorial encontre uma peca errada deixada para tras).
+        foreach (var obj in todasPecas)
+            if (obj != null) Destroy(obj);
+        todasPecas.Clear();
+
+        ResetarSlots();
+
+        number = numeroForcado;
+        spriteRenderer.sprite = LibraSprites[number];
+        comidaCorreta = (ValorComida)Random.Range(0, System.Enum.GetValues(typeof(ValorComida)).Length);
+
+        StartCoroutine(SpawnarRodadaCoroutine());
+    }
 
     void Start()
     {
@@ -64,7 +94,8 @@ public class LevelManager : MonoBehaviour
         Embaralhar(numeros);
 
         AtualizarVidas();
-        StartCoroutine(StartComDelay());
+        if (iniciarAutomaticamente)
+            StartCoroutine(StartComDelay());
     }
 
     void AtualizarVidas()

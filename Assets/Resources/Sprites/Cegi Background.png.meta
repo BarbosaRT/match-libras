@@ -1,0 +1,269 @@
+fileFormatVersion: 2
+guid: c5b59f9b4d7b3bc4288847d24bad7587
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2805809158737736448
+    second: Cegi Background_0
+  - first:
+      213: -1602952410758200690
+    second: Cegi Background_1
+  - first:
+      213: 6070089458483482787
+    second: Cegi Background_2
+  - first:
+      213: 2385772012183721602
+    second: Cegi Background_3
+  - first:
+      213: -4422649804979801697
+    second: Cegi Background_4
+  - first:
+      213: 5068862943801286827
+    second: Cegi Background_5
+  - first:
+      213: -8357208084793577817
+    second: Cegi Background_6
+  - first:
+      213: 8256787743865585733
+    second: Cegi Background_7
+  - first:
+      213: -4386948655114290837
+    second: Cegi Background_8
+  - first:
+      213: 8018158290315393710
+    second: Cegi Background_9
+  - first:
+      213: -1951280461055238134
+    second: Cegi Background_10
+  - first:
+      213: 4361515943678793828
+    second: Cegi Background_11
+  - first:
+      213: -8475291723912772866
+    second: Cegi Background_12
+  - first:
+      213: -4119345772044404811
+    second: Cegi Background_13
+  - first:
+      213: -5600367519382647777
+    second: Cegi Background_14
+  - first:
+      213: 7970160038370182964
+    second: Cegi Background_15
+  - first:
+      213: 108512819869770246
+    second: Cegi Background_16
+  - first:
+      213: 7446807935220543606
+    second: Cegi Background_17
+  - first:
+      213: -6197509417864678765
+    second: Cegi Background_18
+  - first:
+      213: -594083024677186356
+    second: Cegi Background_19
+  - first:
+      213: 3245701577533564447
+    second: Cegi Background_20
+  - first:
+      213: 8543501207540275208
+    second: Cegi Background_21
+  - first:
+      213: -6181401369467513355
+    second: Cegi Background_22
+  - first:
+      213: -3237761765478199209
+    second: Cegi Background_23
+  - first:
+      213: -2613473272423537842
+    second: Cegi Background_24
+  - first:
+      213: -395047661188226680
+    second: Cegi Background_25
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Cegi Background_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 5
+        width: 1192
+        height: 339
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 003b916609c30f620800000000000000
+      internalID: 2805809158737736448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: e94c40fe313d45145893c3972484b944
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Cegi Background_0: 2805809158737736448
+      Cegi Background_1: -1602952410758200690
+      Cegi Background_10: -1951280461055238134
+      Cegi Background_11: 4361515943678793828
+      Cegi Background_12: -8475291723912772866
+      Cegi Background_13: -4119345772044404811
+      Cegi Background_14: -5600367519382647777
+      Cegi Background_15: 7970160038370182964
+      Cegi Background_16: 108512819869770246
+      Cegi Background_17: 7446807935220543606
+      Cegi Background_18: -6197509417864678765
+      Cegi Background_19: -594083024677186356
+      Cegi Background_2: 6070089458483482787
+      Cegi Background_20: 3245701577533564447
+      Cegi Background_21: 8543501207540275208
+      Cegi Background_22: -6181401369467513355
+      Cegi Background_23: -3237761765478199209
+      Cegi Background_24: -2613473272423537842
+      Cegi Background_25: -395047661188226680
+      Cegi Background_3: 2385772012183721602
+      Cegi Background_4: -4422649804979801697
+      Cegi Background_5: 5068862943801286827
+      Cegi Background_6: -8357208084793577817
+      Cegi Background_7: 8256787743865585733
+      Cegi Background_8: -4386948655114290837
+      Cegi Background_9: 8018158290315393710
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
