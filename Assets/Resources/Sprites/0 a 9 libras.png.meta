@@ -340,10 +340,10 @@ TextureImporter:
       name: 0 a 9 libras_17
       rect:
         serializedVersion: 2
-        x: 862
-        y: 608
-        width: 209
-        height: 255
+        x: 818
+        y: 595
+        width: 301
+        height: 297
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
