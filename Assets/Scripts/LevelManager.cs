@@ -5,10 +5,15 @@ using UnityEngine.UI;
 using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
+[System.Serializable]
+public class SpriteList
+{
+    public List<Sprite> Sprites;
+}
 
 public class LevelManager : MonoBehaviour
 {
-    [field: SerializeField] public List<Sprite> LibraSprites { get; private set; }
+    [field: SerializeField] public List<SpriteList> LibraSprites { get; private set; }
     public Image spriteRenderer;
     public int number;
     public Canvas canvas;
@@ -82,7 +87,7 @@ public class LevelManager : MonoBehaviour
         ResetarSlots();
 
         number = numeroForcado;
-        spriteRenderer.sprite = LibraSprites[number];
+        spriteRenderer.sprite = LibraSprites[number].Sprites[Random.Range(0, LibraSprites[number].Sprites.Count)];
         comidaCorreta = (ValorComida)Random.Range(0, System.Enum.GetValues(typeof(ValorComida)).Length);
 
         StartCoroutine(SpawnarRodadaCoroutine());
@@ -90,7 +95,7 @@ public class LevelManager : MonoBehaviour
 
     void Start()
     {
-        numeros = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        numeros = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
         Embaralhar(numeros);
 
         AtualizarVidas();
@@ -129,7 +134,7 @@ public class LevelManager : MonoBehaviour
         }
 
         number = numeros[0];
-        spriteRenderer.sprite = LibraSprites[number];
+        spriteRenderer.sprite = LibraSprites[number].Sprites[Random.Range(0, LibraSprites[number].Sprites.Count)];
         comidaCorreta = (ValorComida)Random.Range(0, System.Enum.GetValues(typeof(ValorComida)).Length);
 
         StartCoroutine(SpawnarRodadaCoroutine());

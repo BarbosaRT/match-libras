@@ -6016,7 +6016,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d888bc21d60f9e4f9fed2bc315f0cbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PauseMenu
-  pauseMenuUI: {fileID: 288872507}
 --- !u!1 &337492414
 GameObject:
   m_ObjectHideFlags: 0
@@ -7264,16 +7263,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
   <LibraSprites>k__BackingField:
-  - {fileID: 4648976757507642922, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
-  - {fileID: -8877508699298448231, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
-  - {fileID: -501078663036814367, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
-  - {fileID: 6142498009694999456, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
-  - {fileID: -7536550032035321576, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
-  - {fileID: -2634953338429779631, guid: 153d68c7c47489248bae939b3d99031e, type: 3}
-  - {fileID: 1327551052200681044, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
-  - {fileID: 321888903844903892, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
-  - {fileID: 7547398601716528140, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
-  - {fileID: 7487354872000984661, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
+  - Sprites:
+    - {fileID: 4648976757507642922, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
+  - Sprites:
+    - {fileID: -8877508699298448231, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
+  - Sprites:
+    - {fileID: -501078663036814367, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
+  - Sprites:
+    - {fileID: 6142498009694999456, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
+  - Sprites:
+    - {fileID: -7536550032035321576, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
+  - Sprites:
+    - {fileID: -2634953338429779631, guid: 153d68c7c47489248bae939b3d99031e, type: 3}
+  - Sprites:
+    - {fileID: 1327551052200681044, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
+  - Sprites:
+    - {fileID: 4926813671880140014, guid: c9de8a6150ae65c47b9ac8fda648b48b, type: 3}
+  - Sprites:
+    - {fileID: 7547398601716528140, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
+  - Sprites:
+    - {fileID: 7487354872000984661, guid: 397aac89101cc84458855e317a1b9a1b, type: 3}
   spriteRenderer: {fileID: 60257930}
   number: 0
   canvas: {fileID: 1953271622}
